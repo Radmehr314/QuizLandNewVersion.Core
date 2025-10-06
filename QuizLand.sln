@@ -1,0 +1,71 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{0F319010-0DC5-4C0D-80AD-3D5376CCDBE6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{D1E861AA-78DA-4CBA-AA72-91BA20D2C520}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infarstructure", "Infarstructure", "{3017FD1E-E226-485C-A252-F8E888746B49}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{79A1176F-FD9E-48B9-B902-92671F38DFE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizLand.Domain", "Domain\QuizLand.Domain\QuizLand.Domain.csproj", "{6FFC311D-C207-44EA-9639-E0B0D5A3779B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizLand.Application", "Application\QuizLand.Application\QuizLand.Application.csproj", "{E2C35677-B182-4229-831C-24CEC57F81DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizLand.Infrastructure.Config", "Infrastructure\QuizLand.Infrastructure.Config\QuizLand.Infrastructure.Config.csproj", "{C6190FD9-455E-46CB-AB6B-824C8AFE1207}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizLand.Infrastructure.Persistance.SQl", "Infrastructure\QuizLand.Infrastructure.Persistance.SQl\QuizLand.Infrastructure.Persistance.SQl.csproj", "{271DBB8B-0962-4F5D-8A93-10F848FC89CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizLand.Api", "Api\QuizLand.Api\QuizLand.Api.csproj", "{1F567309-CBA9-456F-9257-01EDF048A76E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizLand.Application.Contract", "Application\QuizLand.Application.Contract\QuizLand.Application.Contract.csproj", "{21DBBB74-CD3F-4698-9EAA-B5E4571DF925}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{C9E13345-8C47-4592-9494-22B3D72F7EA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizLand.Framework", "Framework\QuizLand.Framework\QuizLand.Framework.csproj", "{ED4894BE-EE72-484B-9BEE-760A2F157CE4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6FFC311D-C207-44EA-9639-E0B0D5A3779B} = {0F319010-0DC5-4C0D-80AD-3D5376CCDBE6}
+		{E2C35677-B182-4229-831C-24CEC57F81DF} = {D1E861AA-78DA-4CBA-AA72-91BA20D2C520}
+		{C6190FD9-455E-46CB-AB6B-824C8AFE1207} = {3017FD1E-E226-485C-A252-F8E888746B49}
+		{271DBB8B-0962-4F5D-8A93-10F848FC89CF} = {3017FD1E-E226-485C-A252-F8E888746B49}
+		{1F567309-CBA9-456F-9257-01EDF048A76E} = {79A1176F-FD9E-48B9-B902-92671F38DFE7}
+		{21DBBB74-CD3F-4698-9EAA-B5E4571DF925} = {D1E861AA-78DA-4CBA-AA72-91BA20D2C520}
+		{ED4894BE-EE72-484B-9BEE-760A2F157CE4} = {C9E13345-8C47-4592-9494-22B3D72F7EA0}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6FFC311D-C207-44EA-9639-E0B0D5A3779B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FFC311D-C207-44EA-9639-E0B0D5A3779B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FFC311D-C207-44EA-9639-E0B0D5A3779B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FFC311D-C207-44EA-9639-E0B0D5A3779B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2C35677-B182-4229-831C-24CEC57F81DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2C35677-B182-4229-831C-24CEC57F81DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2C35677-B182-4229-831C-24CEC57F81DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2C35677-B182-4229-831C-24CEC57F81DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6190FD9-455E-46CB-AB6B-824C8AFE1207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6190FD9-455E-46CB-AB6B-824C8AFE1207}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6190FD9-455E-46CB-AB6B-824C8AFE1207}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6190FD9-455E-46CB-AB6B-824C8AFE1207}.Release|Any CPU.Build.0 = Release|Any CPU
+		{271DBB8B-0962-4F5D-8A93-10F848FC89CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{271DBB8B-0962-4F5D-8A93-10F848FC89CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{271DBB8B-0962-4F5D-8A93-10F848FC89CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{271DBB8B-0962-4F5D-8A93-10F848FC89CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F567309-CBA9-456F-9257-01EDF048A76E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F567309-CBA9-456F-9257-01EDF048A76E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F567309-CBA9-456F-9257-01EDF048A76E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F567309-CBA9-456F-9257-01EDF048A76E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21DBBB74-CD3F-4698-9EAA-B5E4571DF925}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21DBBB74-CD3F-4698-9EAA-B5E4571DF925}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21DBBB74-CD3F-4698-9EAA-B5E4571DF925}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21DBBB74-CD3F-4698-9EAA-B5E4571DF925}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED4894BE-EE72-484B-9BEE-760A2F157CE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED4894BE-EE72-484B-9BEE-760A2F157CE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED4894BE-EE72-484B-9BEE-760A2F157CE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED4894BE-EE72-484B-9BEE-760A2F157CE4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

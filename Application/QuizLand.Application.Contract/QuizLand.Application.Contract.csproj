@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Domain\QuizLand.Domain\QuizLand.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.1" />
+      <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Framework\Security\" />
+      <Folder Include="Queries\Notification\" />
+      <Folder Include="QueryResults\Notification\" />
+    </ItemGroup>
+
+
+
+</Project>

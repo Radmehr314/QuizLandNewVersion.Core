@@ -1,0 +1,18 @@
+﻿using QuizLand.Domain.Models.CodeLogs;
+using QuizLand.Domain.Models.Supporters;
+using QuizLand.Domain.Models.TicketMessages;
+using QuizLand.Domain.Models.Tickets;
+using QuizLand.Domain.Models.Users;
+
+namespace QuizLand.Domain;
+
+public interface IUnitOfWork
+{
+    IUserRepository UserRepository { get; set; }
+    ICodeLogsRepository CodeLogsRepository { get; set; }
+    ISupporterRepository SupporterRepository { get; set; }
+    ITicketRepository TicketRepository { get; set; }
+    ITicketMessageRepository TicketMessageRepository { get; set; }
+    Task<int> Save();
+
+}
