@@ -168,6 +168,7 @@ public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHa
         var code = await GenerateUniqueCode(user.Username);
         await _unitOfWork.CodeLogsRepository.Add(query.ForgetPasswordMapper(user.Username,code.ToString()));
         await _unitOfWork.Save();
+        
         var send = await _smsService.SendCode(query.PhoneNumber, code.ToString());
         return new GetCodeForForgetPasswordQueryResult()
         {
