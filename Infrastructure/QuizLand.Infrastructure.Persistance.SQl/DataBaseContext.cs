@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuizLand.Domain.Models.CodeLogs;
+using QuizLand.Domain.Models.Courses;
+using QuizLand.Domain.Models.Gamers;
+using QuizLand.Domain.Models.Games;
+using QuizLand.Domain.Models.Questions;
 using QuizLand.Domain.Models.Supporters;
 using QuizLand.Domain.Models.TicketMessages;
 using QuizLand.Domain.Models.Tickets;
@@ -14,6 +18,10 @@ public class DataBaseContext : DbContext
     public DbSet<Supporter> Supporters { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<TicketMessage> TicketMessages { get; set; }
+    public DbSet<Course> Courses { get; set; }
+    public DbSet<Question> Questions { get; set; }
+    public DbSet<Game> Games { get; set; }
+    public DbSet<Gamer> Gamers { get; set; }
     public DataBaseContext(DbContextOptions options) : base(options) 
     {
 

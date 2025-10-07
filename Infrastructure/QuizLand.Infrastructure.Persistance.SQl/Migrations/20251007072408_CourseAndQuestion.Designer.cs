@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizLand.Infrastructure.Persistance.SQl;
 
@@ -11,9 +12,11 @@ using QuizLand.Infrastructure.Persistance.SQl;
 namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20251007072408_CourseAndQuestion")]
+    partial class CourseAndQuestion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,64 +74,6 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Course", (string)null);
-                });
-
-            modelBuilder.Entity("QuizLand.Domain.Models.Gamers.Gamer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsOwner")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Gamers", (string)null);
-                });
-
-            modelBuilder.Entity("QuizLand.Domain.Models.Games.Game", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("CountOfJoinedClients")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("EndedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("MatchClients")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("StartedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("WinnerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("WinnerUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WinnerId");
-
-                    b.ToTable("Games", (string)null);
                 });
 
             modelBuilder.Entity("QuizLand.Domain.Models.Questions.Question", b =>
@@ -364,42 +309,12 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("QuizLand.Domain.Models.Gamers.Gamer", b =>
-                {
-                    b.HasOne("QuizLand.Domain.Models.Games.Game", "Game")
-                        .WithMany("Gamers")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("QuizLand.Domain.Models.Users.User", "User")
-                        .WithMany("Gamers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("QuizLand.Domain.Models.Games.Game", b =>
-                {
-                    b.HasOne("QuizLand.Domain.Models.Users.User", "Winner")
-                        .WithMany()
-                        .HasForeignKey("WinnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Winner");
-                });
-
             modelBuilder.Entity("QuizLand.Domain.Models.Questions.Question", b =>
                 {
                     b.HasOne("QuizLand.Domain.Models.Courses.Course", "Course")
                         .WithMany("Questions")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Course");
@@ -458,11 +373,6 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Navigation("Questions");
                 });
 
-            modelBuilder.Entity("QuizLand.Domain.Models.Games.Game", b =>
-                {
-                    b.Navigation("Gamers");
-                });
-
             modelBuilder.Entity("QuizLand.Domain.Models.Supporters.Supporter", b =>
                 {
                     b.Navigation("TicketMessages");
@@ -477,8 +387,6 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 
             modelBuilder.Entity("QuizLand.Domain.Models.Users.User", b =>
                 {
-                    b.Navigation("Gamers");
-
                     b.Navigation("TicketMessages");
 
                     b.Navigation("Tickets");

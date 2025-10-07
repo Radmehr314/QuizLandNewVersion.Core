@@ -35,6 +35,7 @@ public class AutofacModule:Module
             .Where(t => t.Name.EndsWith("Repository"))
             .AsImplementedInterfaces()
             .InstancePerLifetimeScope();
+        
             
         builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
         builder.RegisterType<SmsService>().As<ISmsService>().InstancePerLifetimeScope();

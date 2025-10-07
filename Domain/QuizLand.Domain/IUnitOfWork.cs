@@ -1,4 +1,8 @@
 ﻿using QuizLand.Domain.Models.CodeLogs;
+using QuizLand.Domain.Models.Courses;
+using QuizLand.Domain.Models.Gamers;
+using QuizLand.Domain.Models.Games;
+using QuizLand.Domain.Models.Questions;
 using QuizLand.Domain.Models.Supporters;
 using QuizLand.Domain.Models.TicketMessages;
 using QuizLand.Domain.Models.Tickets;
@@ -13,6 +17,10 @@ public interface IUnitOfWork
     ISupporterRepository SupporterRepository { get; set; }
     ITicketRepository TicketRepository { get; set; }
     ITicketMessageRepository TicketMessageRepository { get; set; }
+    ICourseRepository CourseRepository { get; set; }
+    IQuestionRepository QuestionRepository { get; set; }
+    IGameRepository GameRepository { get; set; }
+    IGamerRepository GamerRepository { get; set; }
     Task<int> Save();
 
 }

@@ -1,5 +1,9 @@
 ﻿using QuizLand.Domain;
 using QuizLand.Domain.Models.CodeLogs;
+using QuizLand.Domain.Models.Courses;
+using QuizLand.Domain.Models.Gamers;
+using QuizLand.Domain.Models.Games;
+using QuizLand.Domain.Models.Questions;
 using QuizLand.Domain.Models.Supporters;
 using QuizLand.Domain.Models.TicketMessages;
 using QuizLand.Domain.Models.Tickets;
@@ -16,8 +20,12 @@ public class UnitOfWork : IUnitOfWork
     public ISupporterRepository SupporterRepository { get; set; }
     public ITicketRepository TicketRepository { get; set; }
     public ITicketMessageRepository TicketMessageRepository { get; set; }
+    public ICourseRepository CourseRepository { get; set; }
+    public IQuestionRepository QuestionRepository { get; set; }
+    public IGameRepository GameRepository { get; set; }
+    public IGamerRepository GamerRepository { get; set; }
 
-    public UnitOfWork(DataBaseContext dataBaseContext, IUserRepository userRepository, ICodeLogsRepository codeLogsRepository, ISupporterRepository supporterRepository, ITicketRepository ticketRepository, ITicketMessageRepository ticketMessageRepository)
+    public UnitOfWork(DataBaseContext dataBaseContext, IUserRepository userRepository, ICodeLogsRepository codeLogsRepository, ISupporterRepository supporterRepository, ITicketRepository ticketRepository, ITicketMessageRepository ticketMessageRepository, ICourseRepository courseRepository, IQuestionRepository questionRepository, IGameRepository gameRepository, IGamerRepository gamerRepository)
     {
         _dataBaseContext = dataBaseContext;
         UserRepository = userRepository;
@@ -25,6 +33,10 @@ public class UnitOfWork : IUnitOfWork
         SupporterRepository = supporterRepository;
         TicketRepository = ticketRepository;
         TicketMessageRepository = ticketMessageRepository;
+        CourseRepository = courseRepository;
+        QuestionRepository = questionRepository;
+        GameRepository = gameRepository;
+        GamerRepository = gamerRepository;
     }
     
     public void Dispose()

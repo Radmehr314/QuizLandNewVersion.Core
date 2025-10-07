@@ -1,0 +1,31 @@
+﻿using Microsoft.EntityFrameworkCore;
+using QuizLand.Domain.Models.Gamers;
+
+namespace QuizLand.Infrastructure.Persistance.SQl.Repositories;
+
+public class GamerRepository : IGamerRepository
+{
+    private readonly DataBaseContext _dataBaseContext;
+
+    public GamerRepository(DataBaseContext dataBaseContext)
+    {
+        _dataBaseContext = dataBaseContext;
+    }
+
+    public async Task Add(Gamer gamer) => await _dataBaseContext.Gamers.AddAsync(gamer);
+
+    public async Task<Gamer?> GetById(Guid id) => await _dataBaseContext.Gamers.FirstOrDefaultAsync(f=>f.Id == id);
+
+    public async Task<int> CountOfClients(Guid gamerId) 
+    {
+        var gamers = await _dataBaseContext.Gamers.Include(g => g.Game).FirstOrDefaultAsync(g => g.Id == gamerId);
+        return gamers.Game.CountOfJoinedClients;
+    }
+
+
+    public async Task<Gamer> GetGamerByClientandGame(Guid gameId, Guid userId)=> await _dataBaseContext.Gamers.FirstOrDefaultAsync(g => g.GameId == gameId && g.UserId == userId);
+
+
+    public async Task<List<Gamer>> GetGamersByGameId(Guid gameId) =>
+        await _dataBaseContext.Gamers.Include(f => f.User).Where(f => f.GameId == gameId).ToListAsync();
+}
