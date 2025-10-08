@@ -20,8 +20,8 @@ public class GameRepository : IGameRepository
     public async Task<Game> CheckOpenGameToJoin() =>
         await _dataBaseContext.Games.FirstOrDefaultAsync(f => f.MatchClients == false);
 
-    public async Task<Game> GetGameById(Guid id) => await _dataBaseContext.Games.FirstOrDefaultAsync(f => f.Id == id);
-    public async Task<Game?> Match(Guid userId) => await _dataBaseContext.Games.Include(g => g.Gamers).FirstOrDefaultAsync(g =>
+    public async Task<Game> GetGameById(Guid id) => await _dataBaseContext.Games.Include(f=>f.Gamers).ThenInclude(f=>f.User).ThenInclude(f=>f.Avatar).FirstOrDefaultAsync(f => f.Id == id);
+    public async Task<Game?> Match(Guid userId) => await _dataBaseContext.Games.Include(g => g.Gamers).ThenInclude(f=>f.User).FirstOrDefaultAsync(g =>
             g.CountOfJoinedClients == 1 && g.Type == 1 && g.Gamers.Any(gamer => gamer.UserId != userId));
 
     public async Task<bool> CanStartNewGame(Guid userId)

@@ -1,5 +1,7 @@
 ﻿
+using QuizLand.Domain.Models.Avatars;
 using QuizLand.Domain.Models.Gamers;
+using QuizLand.Domain.Models.Games;
 using QuizLand.Domain.Models.TicketMessages;
 using QuizLand.Domain.Models.Tickets;
 
@@ -9,6 +11,7 @@ public class User:BaseEntity<Guid>
 {
  
     public string Username { get; set; }
+    public long? AvatarId { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? Email { get; set; }
@@ -23,6 +26,8 @@ public class User:BaseEntity<Guid>
     public string ActiveDeviceId { get; set; }
     public long TokenVersion { get; set; } = 1;
     public bool IsBan { get; set; } = false;
+    public Avatar? Avatar { get; set; }
+    public IEnumerable<Game> Games { get; set; }
     public IEnumerable<Gamer> Gamers { get; set; }
     public IEnumerable<TicketMessage> TicketMessages { get; set; }
     

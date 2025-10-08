@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using QuizLand.Domain.Models.Avatars;
 using QuizLand.Domain.Models.CodeLogs;
 using QuizLand.Domain.Models.Courses;
 using QuizLand.Domain.Models.Gamers;
@@ -21,6 +22,7 @@ public class DataBaseContext : DbContext
     public DbSet<Course> Courses { get; set; }
     public DbSet<Question> Questions { get; set; }
     public DbSet<Game> Games { get; set; }
+    public DbSet<Avatar> Avatars { get; set; }
     public DbSet<Gamer> Gamers { get; set; }
     public DataBaseContext(DbContextOptions options) : base(options) 
     {

@@ -11,6 +11,7 @@ public class UserMapping : IEntityTypeConfiguration<User>
         builder.ToTable("Users").HasKey(f => f.Id);
         builder.Property(f => f.Username).IsRequired();
         builder.Property(f => f.PhoneNumber).IsRequired();
+        builder.HasOne(f => f.Avatar).WithMany(f => f.Users).HasForeignKey(f => f.AvatarId).OnDelete(DeleteBehavior.NoAction);
 
     }
 }

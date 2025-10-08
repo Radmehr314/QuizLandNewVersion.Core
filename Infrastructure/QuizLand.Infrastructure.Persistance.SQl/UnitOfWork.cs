@@ -1,4 +1,5 @@
 ﻿using QuizLand.Domain;
+using QuizLand.Domain.Models.Avatars;
 using QuizLand.Domain.Models.CodeLogs;
 using QuizLand.Domain.Models.Courses;
 using QuizLand.Domain.Models.Gamers;
@@ -24,8 +25,9 @@ public class UnitOfWork : IUnitOfWork
     public IQuestionRepository QuestionRepository { get; set; }
     public IGameRepository GameRepository { get; set; }
     public IGamerRepository GamerRepository { get; set; }
+    public IAvatarRepository AvatarRepository { get; set; }
 
-    public UnitOfWork(DataBaseContext dataBaseContext, IUserRepository userRepository, ICodeLogsRepository codeLogsRepository, ISupporterRepository supporterRepository, ITicketRepository ticketRepository, ITicketMessageRepository ticketMessageRepository, ICourseRepository courseRepository, IQuestionRepository questionRepository, IGameRepository gameRepository, IGamerRepository gamerRepository)
+    public UnitOfWork(DataBaseContext dataBaseContext, IUserRepository userRepository, ICodeLogsRepository codeLogsRepository, ISupporterRepository supporterRepository, ITicketRepository ticketRepository, ITicketMessageRepository ticketMessageRepository, ICourseRepository courseRepository, IQuestionRepository questionRepository, IGameRepository gameRepository, IGamerRepository gamerRepository, IAvatarRepository avatarRepository)
     {
         _dataBaseContext = dataBaseContext;
         UserRepository = userRepository;
@@ -37,6 +39,7 @@ public class UnitOfWork : IUnitOfWork
         QuestionRepository = questionRepository;
         GameRepository = gameRepository;
         GamerRepository = gamerRepository;
+        AvatarRepository = avatarRepository;
     }
     
     public void Dispose()

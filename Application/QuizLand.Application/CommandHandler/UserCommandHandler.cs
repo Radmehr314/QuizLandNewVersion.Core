@@ -81,9 +81,9 @@ public class UserCommandHandler:ICommandHandler<UpdateUserCommand>,ICommandHandl
         if (string.IsNullOrWhiteSpace(command.IP) || !IPAddress.TryParse(command.IP, out var ip) || ip.AddressFamily != AddressFamily.InterNetwork) throw new ValidationException("آیپی دستگاه نامعتبر است!!!");
         if (string.IsNullOrWhiteSpace(command.DeviceId))
             throw new ValidationException("DeviceId الزامی است.");
-        
 
-        var user = command.RegisterMapper();
+        var avatar = await _unitOfWork.AvatarRepository.GetFirst();
+        var user = command.RegisterMapper(avatar.Id);
 
         
         var pepper = _config["Security:Pepper"]

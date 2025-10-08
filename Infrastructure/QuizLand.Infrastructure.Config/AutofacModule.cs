@@ -5,6 +5,7 @@ using QuizLand.Infrastructure.Persistance.SQl.Repositories;
 using QuizLand.Application.CommandHandler;
 using QuizLand.Application.Contract.Contracts;
 using QuizLand.Application.QueryHandler;
+using QuizLand.Application.Services;
 using QuizLand.Domain;
 using QuizLand.Infrastructure.Persistance.SQl.Services;
 
@@ -41,6 +42,7 @@ public class AutofacModule:Module
         builder.RegisterType<SmsService>().As<ISmsService>().InstancePerLifetimeScope();
         builder.RegisterType<TokenService>().As<ITokenService>().InstancePerLifetimeScope();    
         builder.RegisterType<UserInfoService>().As<IUserInfoService>().InstancePerLifetimeScope();    
+        builder.RegisterType<UploadFileService>().As<IUploadFileService>().InstancePerLifetimeScope();    
 
 
         builder.RegisterType<AutofacCommandBus>().As<ICommandBus>().InstancePerLifetimeScope();

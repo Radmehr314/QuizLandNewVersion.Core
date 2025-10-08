@@ -24,14 +24,15 @@ public static class UserMapper
         };
     }*/
 
-    public static User RegisterMapper(this RegisterUserCommand command)
+    public static User RegisterMapper(this RegisterUserCommand command,long avatarId)
     {
         return new User()
         {
             Username = command.Username,
             PhoneNumber = command.PhoneNumber,
             ActiveDeviceId = command.DeviceId,
-            IP = command.IP
+            IP = command.IP,
+            AvatarId = avatarId
         };
     }
 

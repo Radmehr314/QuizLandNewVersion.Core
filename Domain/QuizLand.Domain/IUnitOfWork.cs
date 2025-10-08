@@ -1,4 +1,5 @@
-﻿using QuizLand.Domain.Models.CodeLogs;
+﻿using QuizLand.Domain.Models.Avatars;
+using QuizLand.Domain.Models.CodeLogs;
 using QuizLand.Domain.Models.Courses;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
@@ -21,6 +22,7 @@ public interface IUnitOfWork
     IQuestionRepository QuestionRepository { get; set; }
     IGameRepository GameRepository { get; set; }
     IGamerRepository GamerRepository { get; set; }
+    IAvatarRepository AvatarRepository { get; set; }
     Task<int> Save();
 
 }

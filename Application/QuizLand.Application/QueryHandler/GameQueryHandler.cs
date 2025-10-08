@@ -1,4 +1,5 @@
 ﻿using QuizLand.Application.Contract.Contracts;
+using QuizLand.Application.Contract.Exceptions;
 using QuizLand.Application.Contract.Framework;
 using QuizLand.Application.Contract.Queries.Game;
 using QuizLand.Application.Contract.QueryResults.Game;
@@ -26,6 +27,9 @@ public class GameQueryHandler : IQueryHandler<GetAllMyRunningGamesQuery,List<Get
 
     public async Task<GetGameByIdQueryResult> Handle(GetGameByIdQuery query)
     {
-        throw new NotImplementedException();
+        var game = await _unitOfWork.GameRepository.GetGameById(query.GameId);
+        if (game == null) throw new NotFoundException("بازی یافت نشد!!!");
+        var data =  game.GetGameByIdMapper();
+        return data;
     }
 }

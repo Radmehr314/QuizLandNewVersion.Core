@@ -10,8 +10,7 @@ public class GetGameByIdQueryResult
     public DateTime? EndedAt { get; set; }
     public Guid? WinnerClientId { get; set; }
     public bool MatchClients { get; set; }
-    public DateTime CraetedDateTime { get; set; } 
-    public DateTime? UpdatedDateTime { get; set; }
+
     public int CountOfJoinedClients { get; set; }
     public IEnumerable<GetGamersByGameIdQueryResult> Gamers { get; set; }
 }

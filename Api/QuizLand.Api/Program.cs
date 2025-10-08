@@ -297,7 +297,8 @@ app.MapHealthChecks("/health");
 /*
 app.UseHttpsRedirection();
 */
-
+app.UseStaticFiles();
+app.UseDefaultFiles();
 app.MapControllers();
 app.MapHub<NotificationHub>("/hubs/notifications");
 

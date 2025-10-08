@@ -22,6 +22,23 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("QuizLand.Domain.Models.Avatars.Avatar", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Avatars", (string)null);
+                });
+
             modelBuilder.Entity("QuizLand.Domain.Models.CodeLogs.CodeLogs", b =>
                 {
                     b.Property<long>("Id")
@@ -85,6 +102,9 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<bool>("IsOwner")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
@@ -118,15 +138,12 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("WinnerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("WinnerUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("WinnerId");
+                    b.HasIndex("WinnerUserId");
 
                     b.ToTable("Games", (string)null);
                 });
@@ -315,6 +332,9 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("AvatarId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("Coin")
                         .HasColumnType("bigint");
 
@@ -361,6 +381,8 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AvatarId");
+
                     b.ToTable("Users", (string)null);
                 });
 
@@ -386,10 +408,9 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
             modelBuilder.Entity("QuizLand.Domain.Models.Games.Game", b =>
                 {
                     b.HasOne("QuizLand.Domain.Models.Users.User", "Winner")
-                        .WithMany()
-                        .HasForeignKey("WinnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Games")
+                        .HasForeignKey("WinnerUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Winner");
                 });
@@ -453,6 +474,21 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("QuizLand.Domain.Models.Users.User", b =>
+                {
+                    b.HasOne("QuizLand.Domain.Models.Avatars.Avatar", "Avatar")
+                        .WithMany("Users")
+                        .HasForeignKey("AvatarId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Avatar");
+                });
+
+            modelBuilder.Entity("QuizLand.Domain.Models.Avatars.Avatar", b =>
+                {
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("QuizLand.Domain.Models.Courses.Course", b =>
                 {
                     b.Navigation("Questions");
@@ -478,6 +514,8 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
             modelBuilder.Entity("QuizLand.Domain.Models.Users.User", b =>
                 {
                     b.Navigation("Gamers");
+
+                    b.Navigation("Games");
 
                     b.Navigation("TicketMessages");
 

@@ -30,4 +30,8 @@
       <ProjectReference Include="..\..\Infrastructure\QuizLand.Infrastructure.Persistance.SQl\QuizLand.Infrastructure.Persistance.SQl.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\avatars\" />
+    </ItemGroup>
+
 </Project>
