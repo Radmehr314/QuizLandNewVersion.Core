@@ -40,31 +40,16 @@ builder.Services.AddDistributedMemoryCache();
 var signingKey = new SymmetricSecurityKey(
     Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SigningKey"]!));
 
-
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("SpaLocal", policy =>
-    {
+    options.AddPolicy("AllowAllWithCreds", policy =>
         policy
-            .WithOrigins(
-                "http://localhost:5500",
-                "http://127.0.0.1:5500",
-                "https://localhost:5500",
-                "https://127.0.0.1:5500",
-                "https://192.168.15.17", // اضافه کردن این‌ها به WithOrigins
-                "http://192.168.15.17",
-                "https://192.168.15.17:5005",
-                "http://192.168.15.17:5005",
-                "https://192.168.15.4:5005",
-                "http://192.168.15.4:5005",
-                "http://192.168.15.4"
-            )
+            .SetIsOriginAllowed(_ => true) // = همه اوریجین‌ها مجاز
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials(); // اجازه ارسال کوکی‌ها
-    });
+            .AllowCredentials()
+    );
 });
-
 
 
 // Add services to the container.
@@ -288,7 +273,7 @@ if (string.IsNullOrWhiteSpace(pepper))
 
 
 
-app.UseCors("SpaLocal");
+app.UseCors("AllowAllWithCreds");
 app.UseAuthentication();
 app.UseAuthorization();
 
