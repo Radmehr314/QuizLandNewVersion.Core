@@ -15,7 +15,7 @@ public class TokenService : ITokenService
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("67a91ced-20cb-4b43-86dd-8a6f58d27f6f"));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var now   = DateTime.UtcNow;
-        var exp   = now.AddMinutes(20);
+        var exp   = now.AddDays(1);
 
         var claims = new[]
         {

@@ -13,9 +13,9 @@ public class Round :  BaseEntity<long>
     public long? CourseId { get; set; }
     public int RoundNumber { get; set; } //Round  1 / 2 / 3 / 4
     public RoundStatus RoundStatus { get; set; }
-    public Guid? FirstRandQuestionId { get; set; }
-    public Guid? SecondRandQuestionId { get; set; }
-    public Guid? ThirdRandQuestionId { get; set; }
+    public long? FirstRandQuestionId { get; set; }
+    public long? SecondRandQuestionId { get; set; }
+    public long? ThirdRandQuestionId { get; set; }
     public DateTime CreateAt { get; set; }
     public DateTime? StartedAt { get; set; }
     public DateTime? CompletedAt { get; set; }

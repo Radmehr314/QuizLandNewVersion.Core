@@ -5,5 +5,5 @@ namespace QuizLand.Application.Contract.Queries.Round;
 public class GetRoundQuestionsQuery: IQuery
 {
     public Guid GameId { get; set; }
-    public int  RoundNo { get; set; }
+    public int  RoundNumber { get; set; }
 }

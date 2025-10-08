@@ -72,11 +72,13 @@ public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>
         var canStartNewGame = await _unitOfWork.GameRepository.CanStartNewGame(userId);
         if (!canStartNewGame) throw new ValidationException("شما 5  بازی در حال اجرا دارید!!!");
         var game = startTwoPlayerGameCommand.TwoPlayerFactory();
+        var gamer = userId.AddFirstGamer(game);
+        var round = game.RoundFactory(gamer);
+
         await _unitOfWork.GameRepository.Add(game);
-        await _unitOfWork.GamerRepository.Add(userId.AddFirstGamer(game));
-        await _unitOfWork.Save();
-        var round = game.RoundFactory(userId);
+        await _unitOfWork.GamerRepository.Add(gamer);
         await _unitOfWork.RoundRepository.Add(round);
+
         await _unitOfWork.Save();
         return game.Id;
     }

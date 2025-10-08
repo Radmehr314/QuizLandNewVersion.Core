@@ -226,8 +226,8 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<Guid>("RandQuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RoundQuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("RoundQuestionId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -240,9 +240,11 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 
             modelBuilder.Entity("QuizLand.Domain.Models.RandQuestions.RoundQuestion", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("QuestionId")
                         .HasColumnType("bigint");
@@ -282,8 +284,8 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<Guid>("FirstAnswerGamerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FirstRandQuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("FirstRandQuestionId")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid>("GameId")
                         .HasColumnType("uniqueidentifier");
@@ -294,8 +296,8 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<int>("RoundStatus")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("SecondRandQuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("SecondRandQuestionId")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid>("SelectingGamerId")
                         .HasColumnType("uniqueidentifier");
@@ -303,8 +305,8 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<DateTime?>("StartedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("ThirdRandQuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("ThirdRandQuestionId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -573,7 +575,7 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.HasOne("QuizLand.Domain.Models.Rands.Round", "Round")
                         .WithMany()
                         .HasForeignKey("RoundId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Question");

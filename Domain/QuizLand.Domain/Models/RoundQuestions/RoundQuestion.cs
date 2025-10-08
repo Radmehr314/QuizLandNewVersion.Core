@@ -4,7 +4,7 @@ using QuizLand.Domain.Models.Rands;
 
 namespace QuizLand.Domain.Models.RandQuestions;
 
-public class RoundQuestion : BaseEntity<Guid>
+public class RoundQuestion : BaseEntity<long>
 {
     public long QuestionId { get; set; }
     public int  QuestionNumber { get; set; } //Question 1 2 3 

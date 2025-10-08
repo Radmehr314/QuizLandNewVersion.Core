@@ -21,4 +21,7 @@ public class QuestionRepository : IQuestionRepository
     public async Task<Question> GetById(long id) => await _dataBaseContext.Questions.Include(f=>f.Course).FirstOrDefaultAsync(f=>f.Id == id);
 
     public async Task<long> Count() => await _dataBaseContext.Questions.CountAsync();
+    public async Task<bool> HasAtLeastAsync(long courseId, int countOfQuestion)=> (await _dataBaseContext.Questions.Where(q => q.CourseId == courseId).Select(q => q.Id).Take(countOfQuestion).CountAsync()) >= countOfQuestion;
+
+    public async Task<List<Question>> PickRandomAsync(long courseId, int countOfQuestion)=>await _dataBaseContext.Questions.Where(q => q.CourseId == courseId).OrderBy(_ => Guid.NewGuid()).Take(countOfQuestion).ToListAsync();
 }

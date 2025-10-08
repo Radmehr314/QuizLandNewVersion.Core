@@ -12,8 +12,8 @@ using QuizLand.Infrastructure.Persistance.SQl;
 namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20251008085720_round and rounQuestion")]
-    partial class roundandrounQuestion
+    [Migration("20251008203133_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -229,8 +229,8 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<Guid>("RandQuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RoundQuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long>("RoundQuestionId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -243,9 +243,11 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 
             modelBuilder.Entity("QuizLand.Domain.Models.RandQuestions.RoundQuestion", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("QuestionId")
                         .HasColumnType("bigint");
@@ -282,8 +284,11 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("FirstRandQuestionId")
+                    b.Property<Guid>("FirstAnswerGamerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<long?>("FirstRandQuestionId")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid>("GameId")
                         .HasColumnType("uniqueidentifier");
@@ -294,8 +299,8 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<int>("RoundStatus")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("SecondRandQuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("SecondRandQuestionId")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid>("SelectingGamerId")
                         .HasColumnType("uniqueidentifier");
@@ -303,12 +308,14 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<DateTime?>("StartedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("ThirdRandQuestionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<long?>("ThirdRandQuestionId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("FirstAnswerGamerId");
 
                     b.HasIndex("FirstRandQuestionId");
 
@@ -586,6 +593,12 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("QuizLand.Domain.Models.Gamers.Gamer", "FirstAnswerGamer")
+                        .WithMany()
+                        .HasForeignKey("FirstAnswerGamerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("QuizLand.Domain.Models.RandQuestions.RoundQuestion", "FirstRoundQuestion")
                         .WithMany()
                         .HasForeignKey("FirstRandQuestionId")
@@ -614,6 +627,8 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Course");
+
+                    b.Navigation("FirstAnswerGamer");
 
                     b.Navigation("FirstRoundQuestion");
 

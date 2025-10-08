@@ -8,4 +8,6 @@ public interface IQuestionRepository
     Task Delete(long id);
     Task<Question> GetById(long id);
     Task<long> Count();
+    Task<bool> HasAtLeastAsync(long courseId,int countOfQuestion);
+    Task<List<Question>> PickRandomAsync(long courseId,int countOfQuestion);
 }

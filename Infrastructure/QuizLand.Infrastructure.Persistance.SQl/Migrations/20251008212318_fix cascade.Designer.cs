@@ -12,8 +12,8 @@ using QuizLand.Infrastructure.Persistance.SQl;
 namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20251008044730_fix winner filed")]
-    partial class fixwinnerfiled
+    [Migration("20251008212318_fix cascade")]
+    partial class fixcascade
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,23 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("QuizLand.Domain.Models.Avatars.Avatar", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Avatars", (string)null);
+                });
 
             modelBuilder.Entity("QuizLand.Domain.Models.CodeLogs.CodeLogs", b =>
                 {
@@ -194,6 +211,125 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.ToTable("Question", (string)null);
                 });
 
+            modelBuilder.Entity("QuizLand.Domain.Models.RandQuestionAnswers.RoundQuestionAnswer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Answer")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("GamerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsTrue")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("RandQuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("RoundQuestionId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GamerId");
+
+                    b.HasIndex("RoundQuestionId");
+
+                    b.ToTable("RoundQuestionAnswer");
+                });
+
+            modelBuilder.Entity("QuizLand.Domain.Models.RandQuestions.RoundQuestion", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("QuestionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("QuestionNumber")
+                        .HasColumnType("int");
+
+                    b.Property<long>("RoundId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("RoundId");
+
+                    b.ToTable("RoundQuestions", (string)null);
+                });
+
+            modelBuilder.Entity("QuizLand.Domain.Models.Rands.Round", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CourseId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("FirstAnswerGamerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long?>("FirstRandQuestionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("RoundNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoundStatus")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("SecondRandQuestionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("SelectingGamerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("StartedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("ThirdRandQuestionId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("FirstAnswerGamerId");
+
+                    b.HasIndex("FirstRandQuestionId");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("SecondRandQuestionId");
+
+                    b.HasIndex("SelectingGamerId");
+
+                    b.HasIndex("ThirdRandQuestionId");
+
+                    b.ToTable("Rounds", (string)null);
+                });
+
             modelBuilder.Entity("QuizLand.Domain.Models.Supporters.Supporter", b =>
                 {
                     b.Property<Guid>("Id")
@@ -318,6 +454,9 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("AvatarId")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("Coin")
                         .HasColumnType("bigint");
 
@@ -364,6 +503,8 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AvatarId");
+
                     b.ToTable("Users", (string)null);
                 });
 
@@ -405,6 +546,99 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("QuizLand.Domain.Models.RandQuestionAnswers.RoundQuestionAnswer", b =>
+                {
+                    b.HasOne("QuizLand.Domain.Models.Gamers.Gamer", "Gamer")
+                        .WithMany()
+                        .HasForeignKey("GamerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("QuizLand.Domain.Models.RandQuestions.RoundQuestion", "RoundQuestion")
+                        .WithMany("RoundQuestionAnswers")
+                        .HasForeignKey("RoundQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gamer");
+
+                    b.Navigation("RoundQuestion");
+                });
+
+            modelBuilder.Entity("QuizLand.Domain.Models.RandQuestions.RoundQuestion", b =>
+                {
+                    b.HasOne("QuizLand.Domain.Models.Questions.Question", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("QuizLand.Domain.Models.Rands.Round", "Round")
+                        .WithMany()
+                        .HasForeignKey("RoundId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+
+                    b.Navigation("Round");
+                });
+
+            modelBuilder.Entity("QuizLand.Domain.Models.Rands.Round", b =>
+                {
+                    b.HasOne("QuizLand.Domain.Models.Courses.Course", "Course")
+                        .WithMany("Rounds")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("QuizLand.Domain.Models.Gamers.Gamer", "FirstAnswerGamer")
+                        .WithMany()
+                        .HasForeignKey("FirstAnswerGamerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("QuizLand.Domain.Models.RandQuestions.RoundQuestion", "FirstRoundQuestion")
+                        .WithMany()
+                        .HasForeignKey("FirstRandQuestionId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("QuizLand.Domain.Models.Games.Game", "Game")
+                        .WithMany("Rounds")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("QuizLand.Domain.Models.RandQuestions.RoundQuestion", "SecondRoundQuestion")
+                        .WithMany()
+                        .HasForeignKey("SecondRandQuestionId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("QuizLand.Domain.Models.Gamers.Gamer", "Gamer")
+                        .WithMany()
+                        .HasForeignKey("SelectingGamerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("QuizLand.Domain.Models.RandQuestions.RoundQuestion", "ThirdRoundQuestion")
+                        .WithMany()
+                        .HasForeignKey("ThirdRandQuestionId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Course");
+
+                    b.Navigation("FirstAnswerGamer");
+
+                    b.Navigation("FirstRoundQuestion");
+
+                    b.Navigation("Game");
+
+                    b.Navigation("Gamer");
+
+                    b.Navigation("SecondRoundQuestion");
+
+                    b.Navigation("ThirdRoundQuestion");
                 });
 
             modelBuilder.Entity("QuizLand.Domain.Models.TicketMessages.TicketMessage", b =>
@@ -455,14 +689,38 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("QuizLand.Domain.Models.Users.User", b =>
+                {
+                    b.HasOne("QuizLand.Domain.Models.Avatars.Avatar", "Avatar")
+                        .WithMany("Users")
+                        .HasForeignKey("AvatarId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Avatar");
+                });
+
+            modelBuilder.Entity("QuizLand.Domain.Models.Avatars.Avatar", b =>
+                {
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("QuizLand.Domain.Models.Courses.Course", b =>
                 {
                     b.Navigation("Questions");
+
+                    b.Navigation("Rounds");
                 });
 
             modelBuilder.Entity("QuizLand.Domain.Models.Games.Game", b =>
                 {
                     b.Navigation("Gamers");
+
+                    b.Navigation("Rounds");
+                });
+
+            modelBuilder.Entity("QuizLand.Domain.Models.RandQuestions.RoundQuestion", b =>
+                {
+                    b.Navigation("RoundQuestionAnswers");
                 });
 
             modelBuilder.Entity("QuizLand.Domain.Models.Supporters.Supporter", b =>

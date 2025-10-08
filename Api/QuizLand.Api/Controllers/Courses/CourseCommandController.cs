@@ -27,4 +27,10 @@ public class CourseCommandController : BaseCommandController
     {
         return Ok(await Bus.Dispatch(command));
     }
+    
+    [HttpDelete("PickCourse")]
+    public async Task<ActionResult<CommandResult>> PickCourse([FromBody]PickCourseCommand command)
+    {
+        return Ok(await Bus.Dispatch(command));
+    }
 }

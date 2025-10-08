@@ -9,6 +9,6 @@ public class RounQuestionMapping : IEntityTypeConfiguration<RoundQuestion>
     public void Configure(EntityTypeBuilder<RoundQuestion> builder)
     {
         builder.ToTable("RoundQuestions").HasKey(f=>f.Id);
-        builder.HasOne(f=>f.Round).WithMany().HasForeignKey(f=>f.RoundId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(f=>f.Round).WithMany().HasForeignKey(f=>f.RoundId).OnDelete(DeleteBehavior.Cascade);
     }
 }

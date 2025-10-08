@@ -6,15 +6,15 @@ namespace QuizLand.Application.Mapper;
 
 public static class RoundMapper
 {
-    public static Round RoundFactory(this Game game,Guid OwnerId)
+    public static Round RoundFactory(this Game game,Gamer gamer)
     {
         return new Round()
         {
-            GameId = game.Id,
+            Game = game,
             RoundNumber = 1,
             CourseId = null,
-            SelectingGamerId = OwnerId,
-            FirstAnswerGamerId = OwnerId,
+            Gamer = gamer,
+            FirstAnswerGamer = gamer,
             RoundStatus = RoundStatus.PendingCourse,
             CreateAt = DateTime.Now,
             StartedAt = null,

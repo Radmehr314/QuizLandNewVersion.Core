@@ -26,8 +26,8 @@ public class CourseQueryController : BaseQueryController
         return Ok(await Bus.Dispatch<GetCourseByIdQuery,GetCourseByIdQueryResult>(query));
     }
     [HttpGet("GetAll")]
-    public async Task<ActionResult<GetAllCourseQueryResult>> AllCourses([FromQuery]GetAllCourseQuery query)
+    public async Task<ActionResult<List<GetAllCourseQueryResult>>> AllCourses([FromQuery]GetAllCourseQuery query)
     {
-        return Ok(await Bus.Dispatch<GetAllCourseQuery,GetAllCourseQueryResult>(query));
+        return Ok(await Bus.Dispatch<GetAllCourseQuery,List<GetAllCourseQueryResult>>(query));
     }
 }

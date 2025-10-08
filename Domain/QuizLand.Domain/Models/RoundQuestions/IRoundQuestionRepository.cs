@@ -1,6 +1,7 @@
 ﻿namespace QuizLand.Domain.Models.RandQuestions;
 
-public class IRoundQuestionRepository
+public interface IRoundQuestionRepository
 {
-    
+    Task Add(RoundQuestion roundQuestion);
+    Task<List<RoundQuestion>> LoadQuestionsAsync(long roundId);
 }

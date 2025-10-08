@@ -13,9 +13,9 @@ public class AvatarQueryController : BaseQueryController
     }
     
     [HttpGet("GetAllAvatars")]
-    public async Task<ActionResult<AllAvatarQueryResult>> All([FromQuery]AllAvatarQuery query)
+    public async Task<ActionResult<List<AllAvatarQueryResult>>> All([FromQuery]AllAvatarQuery query)
     {
-        return Ok(await Bus.Dispatch<AllAvatarQuery,AllAvatarQueryResult>(query));
+        return Ok(await Bus.Dispatch<AllAvatarQuery,List<AllAvatarQueryResult>>(query));
     }
     
     [HttpGet("GetAllAvatarPagination")]
