@@ -5,6 +5,8 @@ using QuizLand.Domain.Models.Courses;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
 using QuizLand.Domain.Models.Questions;
+using QuizLand.Domain.Models.RandQuestions;
+using QuizLand.Domain.Models.Rands;
 using QuizLand.Domain.Models.Supporters;
 using QuizLand.Domain.Models.TicketMessages;
 using QuizLand.Domain.Models.Tickets;
@@ -24,6 +26,8 @@ public class DataBaseContext : DbContext
     public DbSet<Game> Games { get; set; }
     public DbSet<Avatar> Avatars { get; set; }
     public DbSet<Gamer> Gamers { get; set; }
+    public DbSet<Round> Rounds { get; set; }
+    public DbSet<RoundQuestion> RoundQuestions { get; set; }
     public DataBaseContext(DbContextOptions options) : base(options) 
     {
 

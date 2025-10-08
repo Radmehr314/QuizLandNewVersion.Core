@@ -20,5 +20,5 @@ public class Game : BaseEntity<Guid>
 
     public IEnumerable<Gamer> Gamers { get; set; }
 
-    /*public ICollection<Rand> Rands { get; set; }*/
+    public IEnumerable<Round> Rounds { get; set; }
 }

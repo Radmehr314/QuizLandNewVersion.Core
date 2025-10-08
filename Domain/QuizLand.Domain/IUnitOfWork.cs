@@ -4,6 +4,8 @@ using QuizLand.Domain.Models.Courses;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
 using QuizLand.Domain.Models.Questions;
+using QuizLand.Domain.Models.RandQuestions;
+using QuizLand.Domain.Models.Rands;
 using QuizLand.Domain.Models.Supporters;
 using QuizLand.Domain.Models.TicketMessages;
 using QuizLand.Domain.Models.Tickets;
@@ -23,6 +25,8 @@ public interface IUnitOfWork
     IGameRepository GameRepository { get; set; }
     IGamerRepository GamerRepository { get; set; }
     IAvatarRepository AvatarRepository { get; set; }
+    IRoundQuestionRepository RoundQuestionRepository { get; set; }
+    IRoundRepository RoundRepository { get; set; }
     Task<int> Save();
 
 }

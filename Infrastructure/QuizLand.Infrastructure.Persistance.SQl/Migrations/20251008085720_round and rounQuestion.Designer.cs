@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizLand.Infrastructure.Persistance.SQl;
 
@@ -11,9 +12,11 @@ using QuizLand.Infrastructure.Persistance.SQl;
 namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20251008085720_round and rounQuestion")]
+    partial class roundandrounQuestion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -279,9 +282,6 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("FirstAnswerGamerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("FirstRandQuestionId")
                         .HasColumnType("uniqueidentifier");
 
@@ -309,8 +309,6 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
-
-                    b.HasIndex("FirstAnswerGamerId");
 
                     b.HasIndex("FirstRandQuestionId");
 
@@ -588,12 +586,6 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("QuizLand.Domain.Models.Gamers.Gamer", "FirstAnswerGamer")
-                        .WithMany()
-                        .HasForeignKey("FirstAnswerGamerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("QuizLand.Domain.Models.RandQuestions.RoundQuestion", "FirstRoundQuestion")
                         .WithMany()
                         .HasForeignKey("FirstRandQuestionId")
@@ -622,8 +614,6 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Course");
-
-                    b.Navigation("FirstAnswerGamer");
 
                     b.Navigation("FirstRoundQuestion");
 

@@ -3,13 +3,13 @@ using QuizLand.Domain.Models.RandQuestions;
 
 namespace QuizLand.Domain.Models.RandQuestionAnswers;
 
-public class RandQuestionAnswer : BaseEntity<Guid>
+public class RoundQuestionAnswer : BaseEntity<Guid>
 {
     public Guid RandQuestionId { get; set; }
     public Guid GamerId { get; set; }
     public int Answer { get; set; }
     //option 1  or 2 or 3 or 4  cliecked 
     public Gamer Gamer { get; set; }
-    public RandQuestion RandQuestion { get; set; }
+    public RoundQuestion RoundQuestion { get; set; }
     public bool IsTrue { get; set; }
 }
