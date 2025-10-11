@@ -278,16 +278,16 @@ if (string.IsNullOrWhiteSpace(pepper))
     throw new InvalidOperationException("Missing Security:Pepper");
 
 
-
+app.MapGet("/ping", () => Results.Text("pong"));
 app.UseCors("AllowAllWithCreds");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHealthChecks("/health");
 
-/*
+
 app.UseHttpsRedirection();
-*/
+
 app.UseStaticFiles();
 app.UseDefaultFiles();
 app.MapControllers();
