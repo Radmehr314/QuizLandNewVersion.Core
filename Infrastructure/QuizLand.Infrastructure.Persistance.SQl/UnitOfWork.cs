@@ -5,6 +5,7 @@ using QuizLand.Domain.Models.Courses;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
 using QuizLand.Domain.Models.Questions;
+using QuizLand.Domain.Models.RandQuestionAnswers;
 using QuizLand.Domain.Models.RandQuestions;
 using QuizLand.Domain.Models.Rands;
 using QuizLand.Domain.Models.Supporters;
@@ -30,8 +31,9 @@ public class UnitOfWork : IUnitOfWork
     public IAvatarRepository AvatarRepository { get; set; }
     public IRoundQuestionRepository RoundQuestionRepository { get; set; }
     public IRoundRepository RoundRepository { get; set; }
+    public IRoundQuestionAnswerRepository RoundQuestionAnswerRepository { get; set; }
 
-    public UnitOfWork(DataBaseContext dataBaseContext, IUserRepository userRepository, ICodeLogsRepository codeLogsRepository, ISupporterRepository supporterRepository, ITicketRepository ticketRepository, ITicketMessageRepository ticketMessageRepository, ICourseRepository courseRepository, IQuestionRepository questionRepository, IGameRepository gameRepository, IGamerRepository gamerRepository, IAvatarRepository avatarRepository, IRoundQuestionRepository roundQuestionRepository, IRoundRepository roundRepository)
+    public UnitOfWork(DataBaseContext dataBaseContext, IUserRepository userRepository, ICodeLogsRepository codeLogsRepository, ISupporterRepository supporterRepository, ITicketRepository ticketRepository, ITicketMessageRepository ticketMessageRepository, ICourseRepository courseRepository, IQuestionRepository questionRepository, IGameRepository gameRepository, IGamerRepository gamerRepository, IAvatarRepository avatarRepository, IRoundQuestionRepository roundQuestionRepository, IRoundRepository roundRepository, IRoundQuestionAnswerRepository roundQuestionAnswerRepository)
     {
         _dataBaseContext = dataBaseContext;
         UserRepository = userRepository;
@@ -46,6 +48,7 @@ public class UnitOfWork : IUnitOfWork
         AvatarRepository = avatarRepository;
         RoundQuestionRepository = roundQuestionRepository;
         RoundRepository = roundRepository;
+        RoundQuestionAnswerRepository = roundQuestionAnswerRepository;
     }
     
     public void Dispose()

@@ -5,11 +5,11 @@ namespace QuizLand.Domain.Models.RandQuestionAnswers;
 
 public class RoundQuestionAnswer : BaseEntity<Guid>
 {
-    public Guid RandQuestionId { get; set; }
+    public long RoundQuestionId { get; set; }
     public Guid GamerId { get; set; }
-    public int Answer { get; set; }
-    //option 1  or 2 or 3 or 4  cliecked 
+    public int SelectedOption { get; set; } //option 1  or 2 or 3 or 4  cliecked 
     public Gamer Gamer { get; set; }
     public RoundQuestion RoundQuestion { get; set; }
-    public bool IsTrue { get; set; }
+    public bool IsCorrect { get; set; }
+    public DateTime SubmitedAt { get; set; }
 }

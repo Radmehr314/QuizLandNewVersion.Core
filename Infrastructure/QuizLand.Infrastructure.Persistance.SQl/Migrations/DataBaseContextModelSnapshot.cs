@@ -214,20 +214,17 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Answer")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("GamerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsTrue")
+                    b.Property<bool>("IsCorrect")
                         .HasColumnType("bit");
-
-                    b.Property<Guid>("RandQuestionId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("RoundQuestionId")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("SelectedOption")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -235,7 +232,7 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 
                     b.HasIndex("RoundQuestionId");
 
-                    b.ToTable("RoundQuestionAnswer");
+                    b.ToTable("RoundQuestionAnswers", (string)null);
                 });
 
             modelBuilder.Entity("QuizLand.Domain.Models.RandQuestions.RoundQuestion", b =>
@@ -548,7 +545,7 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
             modelBuilder.Entity("QuizLand.Domain.Models.RandQuestionAnswers.RoundQuestionAnswer", b =>
                 {
                     b.HasOne("QuizLand.Domain.Models.Gamers.Gamer", "Gamer")
-                        .WithMany()
+                        .WithMany("RoundQuestionAnswers")
                         .HasForeignKey("GamerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -706,6 +703,11 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Navigation("Questions");
 
                     b.Navigation("Rounds");
+                });
+
+            modelBuilder.Entity("QuizLand.Domain.Models.Gamers.Gamer", b =>
+                {
+                    b.Navigation("RoundQuestionAnswers");
                 });
 
             modelBuilder.Entity("QuizLand.Domain.Models.Games.Game", b =>

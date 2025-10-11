@@ -13,6 +13,8 @@ public class Gamer : BaseEntity<Guid>
     public DateTime JoinedAt { get; set; }
     public Game Game { get; set; }
     public User User { get; set; }
+    public IEnumerable<RoundQuestionAnswer> RoundQuestionAnswers { get; set; }
+
     /*
     public IEnumerable<RandQuestionAnswer> RandQuestionAnswers { get; set; }
 */
