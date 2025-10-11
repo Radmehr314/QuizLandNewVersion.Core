@@ -88,7 +88,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "SAMT New Version API", Version = "v1" });
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
 
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -263,7 +263,13 @@ app.UseExceptionHandler(errorApp =>
 /*if (app.Environment.IsDevelopment())
 {*/
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        // اگر RoutePrefix = "swagger" است، باید swagger.json در همین مسیر باشد:
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+        c.RoutePrefix = string.Empty; // UI روی /
+    });
+    app.UseDeveloperExceptionPage();
 /*}*/
 
 
@@ -288,4 +294,5 @@ app.MapControllers();
 app.MapHub<NotificationHub>("/hubs/notifications");
 
 app.Run();
+
 
