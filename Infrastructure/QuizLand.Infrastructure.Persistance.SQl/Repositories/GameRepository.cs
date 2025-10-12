@@ -30,4 +30,11 @@ public class GameRepository : IGameRepository
             .Where(g => g.Gamers.Any(gg => gg.UserId == userId) && g.WinnerUserId == null).CountAsync();
         return AllClientGames >= 5 ? false : true;
     }
+
+    public async Task CompleteGame(Guid gameId, Guid? winnerUserId)
+    {
+        var game = await _dataBaseContext.Games.FirstAsync(g => g.Id == gameId);
+        game.EndedAt = DateTime.Now;
+        game.WinnerUserId = winnerUserId;
+    }
 }

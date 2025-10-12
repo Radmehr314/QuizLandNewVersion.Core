@@ -11,5 +11,7 @@ public interface IGameRepository
     Task<Game> GetGameById(Guid id);
     Task<Game?> Match(Guid userId);
     Task<bool> CanStartNewGame(Guid userId);
+    Task CompleteGame(Guid gameId, Guid? winnerUserId);
+
 
 }

@@ -28,4 +28,23 @@ public class GamerRepository : IGamerRepository
 
     public async Task<List<Gamer>> GetGamersByGameId(Guid gameId) =>
         await _dataBaseContext.Gamers.Include(f => f.User).Where(f => f.GameId == gameId).ToListAsync();
+
+    public async Task<Guid> GetOpponentId(Guid gameId, Guid currentGamerId)
+    {
+        var gs = await _dataBaseContext.Gamers.Where(g => g.GameId == gameId).Select(g => g.Id).ToListAsync();
+        return gs.Single(id => id != currentGamerId);
+    }
+
+    public async Task<(Gamer owner, Gamer guest)> GetPlayersAsync(Guid gameId)
+    {
+        var gamers = await _dataBaseContext.Gamers
+            .Where(g => g.GameId == gameId)
+            .ToListAsync();
+
+        var owner = gamers.Single(g => g.IsOwner);
+        var guest = gamers.Single(g => !g.IsOwner);
+        return (owner, guest);
+    }
+
+
 }

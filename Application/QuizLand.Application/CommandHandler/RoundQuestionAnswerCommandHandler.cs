@@ -9,12 +9,12 @@ using QuizLand.Domain.Models.Rands;
 
 namespace QuizLand.Application.CommandHandler;
 
-public class roundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQuestionAnswersCommand>
+public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQuestionAnswersCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserInfoService _userInfoService;
 
-    public roundQuestionAnswerCommandHandler(IUnitOfWork unitOfWork, IUserInfoService userInfoService)
+    public RoundQuestionAnswerCommandHandler(IUnitOfWork unitOfWork, IUserInfoService userInfoService)
     {
         _unitOfWork = unitOfWork;
         _userInfoService = userInfoService;
@@ -87,9 +87,50 @@ public class roundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
             bool roundCompleted = false;
             bool gameCompleted  = false;
             int? nextRoundNo    = null;
-            
-            
-            
+            if (round.RoundStatus == RoundStatus.AwaitingP1)
+            {
+                round.RoundStatus = RoundStatus.AwaitingP2;
+            }
+            else
+            {
+                round.RoundStatus = RoundStatus.Completed;
+                round.CompletedAt = DateTime.Now;
+                roundCompleted = true;
+                if (round.RoundNumber < 4)
+                {
+                    // ساخت راند بعد و تغییر SelectingGamer
+                    var opponentId = await _unitOfWork.GamerRepository.GetOpponentId(command.GameId, caller.Id);
+                    var next = new Round
+                    {
+                        GameId = round.GameId,
+                        RoundNumber = round.RoundNumber + 1,
+                        SelectingGamerId = opponentId,
+                        RoundStatus = RoundStatus.PendingCourse,
+                        CreateAt = DateTime.Now
+                    };
+                    await _unitOfWork.RoundRepository.Add(next);
+                    nextRoundNo = next.RoundNumber;
+                }
+                else
+                {
+                    // راند ۴ تمام ⇒ پایان بازی
+                    var (owner, guest) = await _unitOfWork.GamerRepository.GetPlayersAsync(command.GameId);
+                    bool callerIsP1 = caller.IsOwner;          
+                    Guid opponentId = callerIsP1 ? guest.Id : owner.Id;
+                    Guid? winnerUserId = guest.UserId;
+                    var game  = await _unitOfWork.GameRepository.GetGameById(command.GameId);
+                    game.WinnerUserId = winnerUserId;
+                    game.EndedAt = DateTime.Now;
+                    gameCompleted = true;
+                }
+            }
+
+            await _unitOfWork.Save();
+            if (!gameCompleted)
+                return new CommandResult() { Id = command.GameId };
+            else
+                return new CommandResult() {   };
+
         }
         catch (Exception e)
         {
