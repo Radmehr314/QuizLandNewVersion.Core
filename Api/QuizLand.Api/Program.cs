@@ -24,6 +24,7 @@ using QuizLand.Application.Contract.Exceptions;
 
 using QuizLand.Infrastructure.Config;
 using QuizLand.Infrastructure.Persistance.SQl;
+using Microsoft.AspNetCore.Mvc;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -49,6 +50,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowCredentials()
     );
+
 });
 
 
@@ -57,10 +59,33 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers(a =>
 {
     a.Conventions.Add(new CqrsModelConvention());
+}).ConfigureApiBehaviorOptions(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(kvp => kvp.Value.Errors.Count > 0)
+            .ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+            );
+
+        var errorMessage = string.Join("; ",
+            errors.SelectMany(kv => kv.Value.Select(msg => $"{kv.Key}: {msg}")));
+
+        var payload = new
+        {
+            ErrorCode = "400",
+            ErrorMessage = "یک الی چند فیلد مقدار دهی نشده است!!!",
+/*            Errors = errors
+*/        };
+
+        return new BadRequestObjectResult(payload);
+    };
 });
 
-builder.Services.AddControllers();
-
+/*builder.Services.AddControllers();
+*/
 builder.Services.AddSignalR().AddJsonProtocol();
 builder.Services.AddScoped<IRealTimeNotifier, SignalRNotifier>();
 
@@ -114,6 +139,7 @@ builder.Services.AddSwaggerGen(option =>
             Array.Empty<string>()
         }
     });
+    option.SupportNonNullableReferenceTypes();
 });
 builder.Services.AddSwaggerGen();
 
@@ -158,7 +184,7 @@ builder.Services
                 context.Response.ContentType = "application/json";
                 var errorJson = JsonSerializer.Serialize(new
                 {
-                    ErrorCode = "ERR_401",
+                    ErrorCode = "401",
                     ErrorMessage = "دسترسی غیرمجاز. لطفاً وارد شوید."
                 });
                 return context.Response.WriteAsync(errorJson);
@@ -194,22 +220,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseStatusCodePages(async context =>
-{
-    var response = context.HttpContext.Response;
-
-    if (response.StatusCode == (int)HttpStatusCode.Unauthorized)
-    {
-        response.ContentType = "application/json";
-        await response.WriteAsync(JsonSerializer.Serialize(new
-        {
-            ErrorCode = "ERR_401",
-            ErrorMessage = "دسترسی غیرمجاز. لطفاً وارد شوید."
-        }));
-    }
-});
-
-
 
 
 app.UseExceptionHandler(errorApp =>
@@ -220,32 +230,32 @@ app.UseExceptionHandler(errorApp =>
         var exception = exceptionHandlerPathFeature?.Error;
 
         // تنظیم پیش‌فرض
-        var errorCode = "ERR_500";
+        var errorCode = "500";
         var errorMessage = "یک خطای ناشناس رخ داده ، با پشتیبانی تماس بگیرید!!!";
         var statusCode = HttpStatusCode.InternalServerError;
 
 
-        
+
         // مدیریت خطاهای خاص
         if (exception is NotFoundException)
         {
-            errorCode = "ERR_404";
+            errorCode = "404";
             errorMessage = exception.Message;
             statusCode = HttpStatusCode.NotFound;
         }
         else if (exception is UserAccessException)
         {
-            errorCode = "ERR_403";
+            errorCode = "403";
             errorMessage = exception.Message;
             statusCode = HttpStatusCode.Forbidden;
         }
         else if (exception is ValidationException validationException)
         {
-            errorCode = "ERR_400";
+            errorCode = "400";
             errorMessage = string.Join(", ", validationException.Errors);
             statusCode = HttpStatusCode.BadRequest;
         }
-        
+
         // تنظیم کد وضعیت HTTP
         context.Response.StatusCode = (int)statusCode;
         context.Response.ContentType = "application/json";
@@ -259,6 +269,32 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
+
+app.UseStatusCodePages(async ctx =>
+{
+    var res = ctx.HttpContext.Response;
+    if (res.HasStarted) return;
+    if (res.StatusCode == 401) return; // چون OnChallenge نوشتی
+
+    res.ContentType = "application/json";
+    var code = res.StatusCode;
+    var payload = new
+    {
+        ErrorCode = code.ToString(),
+        ErrorMessage = code switch
+        {
+            403 => "دسترسی غیرمجاز.",
+            404 => "مسیر/منبع پیدا نشد.",
+            405 => "متد درخواست پشتیبانی نمی‌شود.",
+            _ when code >= 400 && code < 500 => "درخواست نامعتبر است.",
+            _ when code >= 500 => "مشکل داخلی سرور.",
+            _ => "خطا رخ داد."
+        }
+    };
+    await res.WriteAsync(JsonSerializer.Serialize(payload));
+});
+
+
 // Configure the HTTP request pipeline.
 /*if (app.Environment.IsDevelopment())
 {*/
@@ -269,8 +305,8 @@ app.UseExceptionHandler(errorApp =>
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
         c.RoutePrefix = string.Empty; // UI روی /
     });
-    app.UseDeveloperExceptionPage();
-/*}*/
+/*    app.UseDeveloperExceptionPage();
+*//*}*/
 
 
 // چکِ ساده
@@ -286,7 +322,7 @@ app.UseAuthorization();
 app.MapHealthChecks("/health");
 
 
-app.UseHttpsRedirection();
+/*app.UseHttpsRedirection();*/
 
 app.UseStaticFiles();
 app.UseDefaultFiles();
