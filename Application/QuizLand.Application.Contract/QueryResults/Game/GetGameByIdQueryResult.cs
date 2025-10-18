@@ -6,6 +6,7 @@ public class GetGameByIdQueryResult
 {
     public Guid Id { get; set; }
     public int Type { get; set; }
+    public int RoundNumber { get; set; }
     public DateTime StartedAt { get; set; }
     public DateTime? EndedAt { get; set; }
     public Guid? WinnerClientId { get; set; }

@@ -15,6 +15,7 @@ public static class GameMapper
             CountOfJoinedClients = 1,
             StartedAt = DateTime.Now,
             MatchClients = false,
+            RoundNumber = 1
         };
     }
 
@@ -34,6 +35,7 @@ public static class GameMapper
             MatchClients = game.MatchClients,
             EndedAt = game.EndedAt,
             WinnerClientId = game.WinnerUserId,
+            RoundNumber = game.RoundNumber,
             Gamers = game.GetGamersByGameIdMapper()
         };
     }

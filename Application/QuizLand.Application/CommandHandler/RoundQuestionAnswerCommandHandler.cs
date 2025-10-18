@@ -66,7 +66,7 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
         {
             int correct = 0;
             var answerEntities = new List<RoundQuestionAnswer>(3);
-            
+            var game  = await _unitOfWork.GameRepository.GetGameById(command.GameId);
             foreach (var a in command.Answers)
             {
                 var rq = rqMap[a.RoundQuestionId];      // RoundQuestion همین راند
@@ -110,6 +110,8 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                     };
                     await _unitOfWork.RoundRepository.Add(next);
                     nextRoundNo = next.RoundNumber;
+                    game.RoundNumber++;
+
                 }
                 else
                 {
@@ -118,7 +120,6 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                     bool callerIsP1 = caller.IsOwner;          
                     Guid opponentId = callerIsP1 ? guest.Id : owner.Id;
                     Guid? winnerUserId = guest.UserId;
-                    var game  = await _unitOfWork.GameRepository.GetGameById(command.GameId);
                     game.WinnerUserId = winnerUserId;
                     game.EndedAt = DateTime.Now;
                     gameCompleted = true;
@@ -137,7 +138,6 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
             Console.WriteLine(e);
             throw;
         }
-        throw new NotImplementedException();
     }
     
     private static bool Evaluate(RoundQuestion rq, RoundAnswerItem a)

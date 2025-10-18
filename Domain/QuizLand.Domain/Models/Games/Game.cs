@@ -12,6 +12,7 @@ public class Game : BaseEntity<Guid>
     //3 = 2 player with a friend
     public int CountOfJoinedClients { get; set; }
     //How Many Person Joind Now
+    public int RoundNumber { get; set; }
     public DateTime StartedAt { get; set; }
     public DateTime? EndedAt { get; set; }
     public Guid? WinnerUserId { get; set; }
