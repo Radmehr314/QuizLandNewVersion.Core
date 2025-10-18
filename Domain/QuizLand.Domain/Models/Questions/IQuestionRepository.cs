@@ -3,6 +3,7 @@
 public interface IQuestionRepository
 {
     Task Add(Question question);
+    Task AddRange(List<Question> questions);
     Task<List<Question>> GetAllPagination(long courseid, int pageNumber, int size);
     Task<List<Question>> GetAll(long courseid);
     Task Delete(long id);

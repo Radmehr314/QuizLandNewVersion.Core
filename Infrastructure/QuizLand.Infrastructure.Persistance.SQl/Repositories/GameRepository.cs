@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
+using QuizLand.Domain.Models.Rands;
 
 namespace QuizLand.Infrastructure.Persistance.SQl.Repositories;
 
@@ -36,5 +37,41 @@ public class GameRepository : IGameRepository
         var game = await _dataBaseContext.Games.FirstAsync(g => g.Id == gameId);
         game.EndedAt = DateTime.Now;
         game.WinnerUserId = winnerUserId;
+    }
+
+    public async Task<IGameRepository.GameCorrectAnswerResult> GetWinnerByCorrectAnswers(Guid gameId)
+    {
+        var gamers = await _dataBaseContext.Gamers
+            .Where(g => g.GameId == gameId)
+            .Select(g => new { g.Id, g.IsOwner, g.UserId })
+            .ToListAsync();
+
+        var owner = gamers.Single(g => g.IsOwner);
+        var guest = gamers.Single(g => !g.IsOwner);
+        
+        var totals = await _dataBaseContext.RoundQuestionAnswers.Include(f=>f.RoundQuestion)
+            .Where(a =>
+                a.RoundQuestion.Round.GameId == gameId &&
+                (a.RoundQuestion.Round.RoundStatus == RoundStatus.Completed))
+            .GroupBy(a => a.GamerId)
+            .Select(g => new
+            {
+                GamerId = g.Key,
+                Correct = g.Count(x => x.IsCorrect)
+            })
+            .ToListAsync();
+        
+        var ownerCorrect = totals.FirstOrDefault(t => t.GamerId == owner.Id)?.Correct ?? 0;
+        var guestCorrect = totals.FirstOrDefault(t => t.GamerId == guest.Id)?.Correct ?? 0;
+        Guid? winnerUserId = null;
+        
+        if (ownerCorrect != guestCorrect)
+            winnerUserId = ownerCorrect > guestCorrect ? owner.UserId : guest.UserId;
+        
+        return new IGameRepository.GameCorrectAnswerResult(
+            owner.Id, ownerCorrect,
+            guest.Id, guestCorrect,
+            winnerUserId
+        );
     }
 }

@@ -12,6 +12,10 @@ public interface IGameRepository
     Task<Game?> Match(Guid userId);
     Task<bool> CanStartNewGame(Guid userId);
     Task CompleteGame(Guid gameId, Guid? winnerUserId);
-
-
+    Task<GameCorrectAnswerResult> GetWinnerByCorrectAnswers(Guid gameId);
+    public sealed record GameCorrectAnswerResult(
+        Guid OwnerGamerId, int OwnerCorrect,
+        Guid GuestGamerId, int GuestCorrect,
+        Guid? WinnerUserId 
+    );
 }

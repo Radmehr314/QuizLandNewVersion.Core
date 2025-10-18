@@ -30,6 +30,12 @@ public class QuestionCommandController : BaseCommandController
         return Ok(await Bus.Dispatch(command));
     }
     
+    [HttpPost("ImportQuestionsFromExcel")]
+    public async Task<ActionResult<CommandResult>> ImportQuestionsFromExcel([FromForm]ImportQuestionsFromExcelCommand command)
+    {
+        return Ok(await Bus.Dispatch(command));
+    }
+    
 
 
    

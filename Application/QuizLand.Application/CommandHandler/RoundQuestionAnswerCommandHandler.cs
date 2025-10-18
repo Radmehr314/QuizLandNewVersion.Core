@@ -96,6 +96,8 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                 round.RoundStatus = RoundStatus.Completed;
                 round.CompletedAt = DateTime.Now;
                 roundCompleted = true;
+                await _unitOfWork.Save();
+                
                 if (round.RoundNumber < 4)
                 {
                     // ساخت راند بعد و تغییر SelectingGamer
@@ -116,13 +118,21 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                 else
                 {
                     // راند ۴ تمام ⇒ پایان بازی
-                    var (owner, guest) = await _unitOfWork.GamerRepository.GetPlayersAsync(command.GameId);
-                    bool callerIsP1 = caller.IsOwner;          
-                    Guid opponentId = callerIsP1 ? guest.Id : owner.Id;
-                    Guid? winnerUserId = guest.UserId;
-                    game.WinnerUserId = winnerUserId;
+                    
+                    var stats = await _unitOfWork.GameRepository
+                        .GetWinnerByCorrectAnswers(command.GameId);
+                    Guid? winnerUserId = null;
+                    if (stats.WinnerUserId.HasValue)
+                    {
+                        var (owner, guest) = await _unitOfWork.GamerRepository.GetPlayersAsync(command.GameId);
+                        winnerUserId = (stats.WinnerUserId.Value == owner.Id) ? owner.UserId : guest.UserId;
+                    }
+                    
+                    game.WinnerUserId = winnerUserId;   // nullable برای مساوی
                     game.EndedAt = DateTime.Now;
                     gameCompleted = true;
+                    
+                    
                 }
             }
 
