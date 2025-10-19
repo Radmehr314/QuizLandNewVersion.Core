@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 
 namespace QuizLand.Infrastructure.Persistance.SQl.Error;
@@ -10,10 +12,15 @@ public class TelegramNotifier  : ITelegramNotifier
     private readonly ILogger<TelegramNotifier> _logger;
 
     // اگه میخوای هاردکد باشه، همینی بمونه
-    private readonly string _botToken  = "8312279011:AAE_gy2QnZuWk_iF5H70NrY4OqTK4itS7sM";
-    private readonly List<string> _chatIds = new() { "1176678219" };
-    
-    
+    private readonly string _botToken  = "EAIBD0WXUEOPFLYSVDUEAYZMCHJKJLUDBOOHTFOEZQNYLRHOIEEPAXYXNUSOYOPP";
+    private readonly List<string> _chatIds = new() { "zpsyobageamdcptekdbojjqcfkbzcbuu" };
+
+    public TelegramNotifier(IHttpClientFactory http, ILogger<TelegramNotifier> logger)
+    {
+        _http = http;
+        _logger = logger;
+    }
+
     public async Task SendAsync(string level, string message, string? path = null, int? statusCode = null, string? correlationId = null,
         string? userId = null, DateTime? whenUtc = null)
     {
@@ -25,7 +32,7 @@ public class TelegramNotifier  : ITelegramNotifier
         }
 
         var when = (whenUtc ?? DateTime.UtcNow).ToString("yyyy-MM-dd HH:mm:ss") + "Z";
-        var text = 
+        var textMessage = 
             $@"❗️*{Esc(level)}*
 `{Esc(correlationId)}`
 *{Esc(message)}*
@@ -33,22 +40,28 @@ public class TelegramNotifier  : ITelegramNotifier
 `{Esc(userId)}`
 {(statusCode?.ToString() ?? "")} · {when}";
 
-        var url = $"https://api.telegram.org/bot{_botToken}/sendMessage";
+        var url = $"https://botapi.rubika.ir/v3/{_botToken}/sendMessage";
         var client = _http.CreateClient();
 
         foreach (var chatId in _chatIds)
         {
-            var payload = new Dictionary<string, string>
+            var payload = new 
             {
-                ["chat_id"] = chatId,
-                ["text"] = text,
-                ["parse_mode"] = "MarkdownV2" // با escape بالا سازگاره
+                chat_id = chatId,
+                text = textMessage,
+                chat_keypad_type = "New",
             };
+            var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = null // نگه داشتن نام فیلدها همونطور که هست
+            });
 
             try
             {
-                using var content = new FormUrlEncodedContent(payload);
+                using var content = new StringContent(json, Encoding.UTF8, "application/json");
                 var resp = await client.PostAsync(url, content);
+                var respText = await resp.Content.ReadAsStringAsync();
+                
                 resp.EnsureSuccessStatusCode();
             }
             catch (Exception ex)
