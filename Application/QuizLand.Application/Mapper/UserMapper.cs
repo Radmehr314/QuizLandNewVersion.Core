@@ -36,21 +36,19 @@ public static class UserMapper
         };
     }
 
-    /*public static GetUserByIdQueryResult GetByIdMapper(this User user)
+    public static GetLoginUserInfoQueryResult LoginUserInfoMapper(this User user)
     {
-        return new GetUserByIdQueryResult()
+        return new GetLoginUserInfoQueryResult()
         {
             Id = user.Id,
-            PersonelCode = user.PersonelCode,
-            FullName = user.FullName,
-            Position = user.Position,
-            WorkArea = user.WorkArea,      
-            BirthDate = user.BirthDate,
-            HireDate =  user.HireDate,
+            Username = user.Username,
+            AvatarPath = user.Avatar.FilePath,
             PhoneNumber = user.PhoneNumber,
-            IsBan = user.IsBan
+            Coin = user.Coin,
+            Level = user.Level,
+            XP = user.XP
         };
-    }*/
+    }
 
     public static GetLoginUserQueryResult GetLoginUserMapper(this User user)
     {

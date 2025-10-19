@@ -2,6 +2,7 @@
 using QuizLand.Domain.Models.Avatars;
 using QuizLand.Domain.Models.CodeLogs;
 using QuizLand.Domain.Models.Courses;
+using QuizLand.Domain.Models.ErrorLogs;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
 using QuizLand.Domain.Models.Questions;
@@ -30,6 +31,7 @@ public class DataBaseContext : DbContext
     public DbSet<Round> Rounds { get; set; }
     public DbSet<RoundQuestion> RoundQuestions { get; set; }
     public DbSet<RoundQuestionAnswer> RoundQuestionAnswers { get; set; }
+    public DbSet<ErrorLog> ErrorLogs { get; set; }
     public DataBaseContext(DbContextOptions options) : base(options) 
     {
 

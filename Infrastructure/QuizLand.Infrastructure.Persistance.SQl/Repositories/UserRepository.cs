@@ -15,7 +15,7 @@ public class UserRepository : IUserRepository
 
     public async Task Add(User user)=>await _dataBaseContext.AddAsync(user);
 
-    public async Task<User> GetById(Guid id) => await _dataBaseContext.Users.FirstOrDefaultAsync(f=>f.Id == id);
+    public async Task<User> GetById(Guid id) => await _dataBaseContext.Users.Include(f=>f.Avatar).FirstOrDefaultAsync(f=>f.Id == id);
 
     public async Task<List<User>> All() => await _dataBaseContext.Users.ToListAsync();
     public async Task Delete(Guid id) =>  _dataBaseContext.Remove(await GetById((id)));

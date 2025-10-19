@@ -25,6 +25,8 @@ using QuizLand.Application.Contract.Exceptions;
 using QuizLand.Infrastructure.Config;
 using QuizLand.Infrastructure.Persistance.SQl;
 using Microsoft.AspNetCore.Mvc;
+using QuizLand.Application.Contract.Commands.ErrorLog;
+using QuizLand.Infrastructure.Persistance.SQl.Error;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,6 +65,10 @@ builder.Services.AddControllers(a =>
 {
     options.InvalidModelStateResponseFactory = context =>
     {
+        
+        var http = context.HttpContext;
+        
+        
         var errors = context.ModelState
             .Where(kvp => kvp.Value.Errors.Count > 0)
             .ToDictionary(
@@ -79,6 +85,33 @@ builder.Services.AddControllers(a =>
             ErrorMessage = "یک الی چند فیلد مقدار دهی نشده است!!!",
 /*            Errors = errors
 */        };
+        try
+        {
+            var reporter = http.RequestServices.GetRequiredService<IErrorReporter>();
+
+            // اگر می‌خواهی errors را کامل ذخیره کنی، به JSON تبدیلش کن
+            var details = System.Text.Json.JsonSerializer.Serialize(errors);
+
+            _ = reporter.ReportAsync(new AddErrorLogCommand()
+            {
+                Level         = "Warning",
+                StatusCode    = StatusCodes.Status400BadRequest,
+                Message       = "Model validation failed",
+                Details       = details, // فیلد اختیاری در ErrorReport (اگه داری)
+                Path          = http.Request.Path,
+                Method        = http.Request.Method,
+                UserId        = http.User?.Identity?.IsAuthenticated == true
+                    ? http.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                    : null,
+                ClientIp      = http.Connection.RemoteIpAddress?.ToString(),
+                UserAgent     = http.Request.Headers.UserAgent.ToString(),
+                CorrelationId = http.TraceIdentifier,
+            });
+        }
+        catch
+        {
+            // از خوردن استثناء در مسیر پاسخ جلوگیری کن
+        }
 
         return new BadRequestObjectResult(payload);
     };
@@ -176,8 +209,31 @@ builder.Services
                 return Task.CompletedTask;
             },
 
-            OnChallenge = context =>
+            OnChallenge = async context =>
             {
+                // قبل از هندل پاسخ، لاگ کن
+                try
+                {
+                    var http = context.HttpContext;
+                    var reporter = http.RequestServices.GetRequiredService<IErrorReporter>();
+                    await reporter.ReportAsync(new AddErrorLogCommand
+                    {
+                        Level         = "Warning",
+                        StatusCode    = StatusCodes.Status401Unauthorized,
+                        Message       = "Unauthorized (JWT challenge).",
+                        Details       = null, // در صورت نیاز توضیح اضافه کن
+                        Path          = http.Request.Path,
+                        Method        = http.Request.Method,
+                        UserId        = http.User?.Identity?.IsAuthenticated == true
+                            ? http.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                            : null,
+                        ClientIp      = http.Connection.RemoteIpAddress?.ToString(),
+                        UserAgent     = http.Request.Headers.UserAgent.ToString(),
+                        CorrelationId = http.TraceIdentifier,
+                    });
+                }
+                catch { /* نذار 401 خراب بشه */ }
+                
                 context.HandleResponse();
 
                 context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
@@ -187,7 +243,7 @@ builder.Services
                     ErrorCode = "401",
                     ErrorMessage = "دسترسی غیرمجاز. لطفاً وارد شوید."
                 });
-                return context.Response.WriteAsync(errorJson);
+                await context.Response.WriteAsync(errorJson);
             }
         };
     });
@@ -226,6 +282,36 @@ app.UseExceptionHandler(errorApp =>
 {
     errorApp.Run(async context =>
     {
+        var feature = context.Features.Get<IExceptionHandlerPathFeature>();
+        var ex  = feature?.Error;
+        var req = context.Request;
+
+        // 1) مپ کردن نوع خطا به کد مناسب
+        var (statusCodeTypes, clientMessage, level) = ex switch
+        {
+            ValidationException ve => (StatusCodes.Status400BadRequest, string.Join(", ", ve.Errors), "Warning"),
+            UserAccessException  => (StatusCodes.Status403Forbidden,     ex!.Message,                  "Warning"),
+            NotFoundException    => (StatusCodes.Status404NotFound,      ex!.Message,                  "Info"),
+            _                    => (StatusCodes.Status500InternalServerError, "مشکل داخلی سرور.",   "Error")
+        };
+        // 2) گزارش به سرویس لاگ + تلگرام با همان statusCode
+        var reporter = context.RequestServices.GetRequiredService<IErrorReporter>();
+        await reporter.ReportAsync(new AddErrorLogCommand()
+        {
+            Message       = ex?.Message ?? clientMessage,
+            Exception     = ex,
+            StatusCode    = statusCodeTypes,
+            Path          = req.Path,
+            Method        = req.Method,
+            UserId        = context.User?.Identity?.IsAuthenticated == true
+                ? context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+                : null,
+            ClientIp      = context.Connection.RemoteIpAddress?.ToString(),
+            UserAgent     = req.Headers.UserAgent.ToString(),
+            CorrelationId = context.TraceIdentifier,
+            Level         = level
+        });
+
         var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
         var exception = exceptionHandlerPathFeature?.Error;
 

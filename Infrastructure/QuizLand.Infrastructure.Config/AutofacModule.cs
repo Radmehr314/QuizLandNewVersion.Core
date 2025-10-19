@@ -7,6 +7,7 @@ using QuizLand.Application.Contract.Contracts;
 using QuizLand.Application.QueryHandler;
 using QuizLand.Application.Services;
 using QuizLand.Domain;
+using QuizLand.Infrastructure.Persistance.SQl.Error;
 using QuizLand.Infrastructure.Persistance.SQl.Services;
 
 
@@ -47,6 +48,11 @@ public class AutofacModule:Module
 
         builder.RegisterType<AutofacCommandBus>().As<ICommandBus>().InstancePerLifetimeScope();
         builder.RegisterType<AutofacQueryBus>().As<IQueryBus>().InstancePerLifetimeScope();
+        builder.RegisterType<ErrorNotifyQueue>()
+            .As<IErrorNotifyQueue>()
+            .SingleInstance();
+        builder.RegisterType<ErrorReporter>().As<IErrorReporter>().InstancePerLifetimeScope();
+        builder.RegisterType<TelegramNotifier>().As<ITelegramNotifier>().SingleInstance();
 
 
     }

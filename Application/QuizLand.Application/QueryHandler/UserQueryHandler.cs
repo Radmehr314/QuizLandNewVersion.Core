@@ -17,6 +17,7 @@ using QuizLand.Application.Mapper;
 namespace QuizLand.Application.QueryHandler;
 
 public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHandler<GetCodeQuery,GetCodeQueryResult>,IQueryHandler<CountOfOnlineUserQuery,CountOfOnlineUserQueryResult>,IQueryHandler<CountAllUserQuery,CountAllUserQueryResult>,IQueryHandler<GetCodeForForgetPasswordQuery,GetCodeForForgetPasswordQueryResult>
+,IQueryHandler<GetLoginUserInfoQuery,GetLoginUserInfoQueryResult>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITokenService _tokenService;
@@ -182,4 +183,11 @@ public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHa
         if (user is null) throw new NotFoundException("کاربر یافت نشد!!!");
         return user.GetByPersonelCodeMapper();
     }*/
+
+
+    public async Task<GetLoginUserInfoQueryResult> Handle(GetLoginUserInfoQuery query)
+    {
+        var user = await _unitOfWork.UserRepository.GetById(_userInfoService.GetUserIdByToken());
+        return user.LoginUserInfoMapper();
+    }
 }

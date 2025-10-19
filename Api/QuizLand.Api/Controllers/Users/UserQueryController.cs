@@ -46,6 +46,14 @@ public class UserQueryController : BaseQueryController
         return Ok(await Bus.Dispatch<LoginRequestDto,LoginDto>(query));
 
     }
+    
+    [Authorize]
+    [HttpGet("LoginUserInfo")]
+    public async Task<ActionResult<GetLoginUserInfoQueryResult>> Login([FromQuery] GetLoginUserInfoQuery query)
+    {
+        return Ok(await Bus.Dispatch<GetLoginUserInfoQuery,GetLoginUserInfoQueryResult>(query));
+
+    }
 
     /*[HttpGet("GetAllPagination")]
     public async Task<ActionResult<GetAllUserPaginationQueryResult>> GetAllPagination(
