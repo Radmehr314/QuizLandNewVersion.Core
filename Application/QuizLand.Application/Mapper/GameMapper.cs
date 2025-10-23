@@ -19,12 +19,20 @@ public static class GameMapper
         };
     }
 
-    public static List<GetAllMyRunningGamesQueryResult> GetAllMyRunningGamesMapper(this List<Game> games)
+    public static List<GetAllMyRunningGamesQueryResult> GetAllMyRunningGamesMapper(this List<Game> games,Guid userId)
     {
-        return games.Select(f => new GetAllMyRunningGamesQueryResult() {Id = f.Id,Type = f.Type,StartedAt = f.StartedAt,CountOfJoinedClients = f.CountOfJoinedClients}).ToList();
+        return games.Select(f => new GetAllMyRunningGamesQueryResult()
+        {
+            Id = f.Id,
+            Type = f.Type,
+            StartedAt = f.StartedAt,
+            CountOfJoinedClients = f.CountOfJoinedClients,
+            RoundNumber = f.RoundNumber,
+            IsYourTurn =  (f.UserTurnId != null && f.UserTurnId == userId ? true : false)
+        }).ToList();
     }
 
-    public static GetGameByIdQueryResult GetGameByIdMapper(this Game game)
+    public static GetGameByIdQueryResult GetGameByIdMapper(this Game game,Guid userId)
     {
         return new GetGameByIdQueryResult()
         {
@@ -36,6 +44,7 @@ public static class GameMapper
             EndedAt = game.EndedAt,
             WinnerClientId = game.WinnerUserId,
             RoundNumber = game.RoundNumber,
+            IsYourTurn = (game.UserTurnId != null && game.UserTurnId == userId ? true : false),
             Gamers = game.GetGamersByGameIdMapper()
         };
     }

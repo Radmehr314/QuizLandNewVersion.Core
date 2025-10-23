@@ -87,9 +87,11 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
             bool roundCompleted = false;
             bool gameCompleted  = false;
             int? nextRoundNo    = null;
+            var opponentUserId = game.Gamers.Where(f => f.UserId != userId).FirstOrDefault();
             if (round.RoundStatus == RoundStatus.AwaitingP1)
             {
                 round.RoundStatus = RoundStatus.AwaitingP2;
+                game.UserTurnId = opponentUserId.UserId;
             }
             else
             {
@@ -113,6 +115,7 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                     await _unitOfWork.RoundRepository.Add(next);
                     nextRoundNo = next.RoundNumber;
                     game.RoundNumber++;
+                    game.UserTurnId = userId;
 
                 }
                 else
@@ -131,8 +134,8 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                     game.WinnerUserId = winnerUserId;   // nullable برای مساوی
                     game.EndedAt = DateTime.Now;
                     gameCompleted = true;
-                    
-                    
+                    game.UserTurnId = null;
+
                 }
             }
 

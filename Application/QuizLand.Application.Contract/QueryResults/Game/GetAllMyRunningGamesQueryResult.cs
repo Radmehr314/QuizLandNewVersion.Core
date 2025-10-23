@@ -6,4 +6,6 @@ public class GetAllMyRunningGamesQueryResult
     public int Type { get; set; }
     public DateTime StartedAt { get; set; }
     public int CountOfJoinedClients { get; set; }
+    public int RoundNumber { get; set; }
+    public bool IsYourTurn { get; set; }
 }

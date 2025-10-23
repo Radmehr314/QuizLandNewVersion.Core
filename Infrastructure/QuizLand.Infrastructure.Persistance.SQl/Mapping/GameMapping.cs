@@ -10,5 +10,6 @@ public class GameMapping : IEntityTypeConfiguration<Game>
     {
         builder.ToTable("Games").HasKey(f=>f.Id);
         builder.HasOne(f=>f.Winner).WithMany(f=>f.Games).HasForeignKey(f=>f.WinnerUserId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(f=>f.UserTurn).WithMany(f=>f.MyTurnGames).HasForeignKey(f=>f.UserTurnId).OnDelete(DeleteBehavior.NoAction);
     }
 }

@@ -17,6 +17,8 @@ public class Game : BaseEntity<Guid>
     public DateTime? EndedAt { get; set; }
     public Guid? WinnerUserId { get; set; }
     public bool MatchClients { get; set; } =  false;
+    public Guid? UserTurnId { get; set; }
+    public User UserTurn { get; set; }
     public User Winner { get; set; }
 
     public IEnumerable<Gamer> Gamers { get; set; }

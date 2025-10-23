@@ -13,7 +13,7 @@ public class TelegramNotifier  : ITelegramNotifier
 
     // اگه میخوای هاردکد باشه، همینی بمونه
     private readonly string _botToken  = "EAIBD0WXUEOPFLYSVDUEAYZMCHJKJLUDBOOHTFOEZQNYLRHOIEEPAXYXNUSOYOPP";
-    private readonly List<string> _chatIds = new() { "zpsyobageamdcptekdbojjqcfkbzcbuu" };
+    private readonly List<string> _chatIds = new() { "b0ohIi0C7S0fff19615f087fc8009d34" };
 
     public TelegramNotifier(IHttpClientFactory http, ILogger<TelegramNotifier> logger)
     {

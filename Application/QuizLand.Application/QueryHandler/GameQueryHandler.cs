@@ -21,7 +21,7 @@ public class GameQueryHandler : IQueryHandler<GetAllMyRunningGamesQuery,List<Get
     public async Task<List<GetAllMyRunningGamesQueryResult>> Handle(GetAllMyRunningGamesQuery query)
     {
         var games = await _unitOfWork.GameRepository.GetAllMyRunningGames(_userInfoService.GetUserIdByToken());
-        return games.GetAllMyRunningGamesMapper();
+        return games.GetAllMyRunningGamesMapper(_userInfoService.GetUserIdByToken());
 
     }
 
@@ -29,7 +29,7 @@ public class GameQueryHandler : IQueryHandler<GetAllMyRunningGamesQuery,List<Get
     {
         var game = await _unitOfWork.GameRepository.GetGameById(query.GameId);
         if (game == null) throw new NotFoundException("بازی یافت نشد!!!");
-        var data =  game.GetGameByIdMapper();
+        var data =  game.GetGameByIdMapper(_userInfoService.GetUserIdByToken());
         return data;
     }
 }

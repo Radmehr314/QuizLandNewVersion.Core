@@ -47,6 +47,7 @@ public class ErrorReporter : IErrorReporter
         }
 
 
+        /*
         await _telegramNotifier.SendAsync(
             level: report.Level,
             message: report.Message,
@@ -54,7 +55,7 @@ public class ErrorReporter : IErrorReporter
             statusCode: report.StatusCode,
             correlationId: report.CorrelationId,
             userId:report.UserId,
-            whenUtc: DateTime.UtcNow);
+            whenUtc: DateTime.UtcNow);*/
     }
 
 }

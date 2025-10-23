@@ -7,6 +7,5 @@ public class GetLoginUserInfoQueryResult
     public string AvatarPath { get; set; }
     public string PhoneNumber { get; set; }
     public long XP { get; set; }
-    public long Level { get; set; }
     public long Coin { get; set; }
 }

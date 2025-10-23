@@ -45,7 +45,6 @@ public static class UserMapper
             AvatarPath = user.Avatar.FilePath,
             PhoneNumber = user.PhoneNumber,
             Coin = user.Coin,
-            Level = user.Level,
             XP = user.XP
         };
     }

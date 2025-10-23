@@ -11,6 +11,8 @@ public class GetGameByIdQueryResult
     public DateTime? EndedAt { get; set; }
     public Guid? WinnerClientId { get; set; }
     public bool MatchClients { get; set; }
+    public bool IsYourTurn { get; set; }
+
 
     public int CountOfJoinedClients { get; set; }
     public IEnumerable<GetGamersByGameIdQueryResult> Gamers { get; set; }

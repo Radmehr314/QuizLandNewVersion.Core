@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizLand.Infrastructure.Persistance.SQl;
 
@@ -11,9 +12,11 @@ using QuizLand.Infrastructure.Persistance.SQl;
 namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20251023120448_remove level from user")]
+    partial class removelevelfromuser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,15 +207,10 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("UserTurnId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("WinnerUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserTurnId");
 
                     b.HasIndex("WinnerUserId");
 
@@ -594,17 +592,10 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 
             modelBuilder.Entity("QuizLand.Domain.Models.Games.Game", b =>
                 {
-                    b.HasOne("QuizLand.Domain.Models.Users.User", "UserTurn")
-                        .WithMany("MyTurnGames")
-                        .HasForeignKey("UserTurnId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
                     b.HasOne("QuizLand.Domain.Models.Users.User", "Winner")
                         .WithMany("Games")
                         .HasForeignKey("WinnerUserId")
                         .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("UserTurn");
 
                     b.Navigation("Winner");
                 });
@@ -817,8 +808,6 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Navigation("Gamers");
 
                     b.Navigation("Games");
-
-                    b.Navigation("MyTurnGames");
 
                     b.Navigation("TicketMessages");
 

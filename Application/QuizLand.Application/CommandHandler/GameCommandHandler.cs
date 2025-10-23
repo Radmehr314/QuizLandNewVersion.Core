@@ -75,6 +75,7 @@ public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>
         var gamer = userId.AddFirstGamer(game);
         var round = game.RoundFactory(gamer);
 
+        game.UserTurnId = _userInfoService.GetUserIdByToken();
         await _unitOfWork.GameRepository.Add(game);
         await _unitOfWork.GamerRepository.Add(gamer);
         await _unitOfWork.RoundRepository.Add(round);

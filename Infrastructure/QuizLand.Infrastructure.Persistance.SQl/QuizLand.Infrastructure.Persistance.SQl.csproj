@@ -7,7 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
+        
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
             <PrivateAssets>all</PrivateAssets>
@@ -31,12 +34,10 @@
       <Folder Include="Security\" />
     </ItemGroup>
     <ItemGroup>
-      <Reference Include="Microsoft.Extensions.Hosting.Abstractions">
-        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.11\Microsoft.Extensions.Hosting.Abstractions.dll</HintPath>
-      </Reference>
-      <Reference Include="Microsoft.Extensions.Http">
-        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\8.0.11\Microsoft.Extensions.Http.dll</HintPath>
-      </Reference>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.1" />
+
+
     </ItemGroup>
 
 </Project>
