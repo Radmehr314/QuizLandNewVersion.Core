@@ -30,4 +30,10 @@ public class CourseQueryController : BaseQueryController
     {
         return Ok(await Bus.Dispatch<GetAllCourseQuery,List<GetAllCourseQueryResult>>(query));
     }
+    
+    [HttpGet("GetAvailableCourses")]
+    public async Task<ActionResult<List<GetAllAvailableCourseQueryResult>>> AllCourses([FromQuery]GetAllAvailableCourseQuery query)
+    {
+        return Ok(await Bus.Dispatch<GetAllAvailableCourseQuery,List<GetAllAvailableCourseQueryResult>>(query));
+    }
 }

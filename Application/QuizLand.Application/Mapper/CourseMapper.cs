@@ -38,4 +38,11 @@ public static class CourseMapper
              Title = course.Title
         };
     }
+    
+    public static List<GetAllAvailableCourseQueryResult> GetUnpickedCoursesMapper(this List<Course> courses)
+    {
+        return courses.Select(f => new GetAllAvailableCourseQueryResult() { Id = f.Id, Title = f.Title }).ToList();
+
+    }
+    
 }
