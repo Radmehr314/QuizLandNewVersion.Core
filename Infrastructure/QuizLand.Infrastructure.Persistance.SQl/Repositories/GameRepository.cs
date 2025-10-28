@@ -16,7 +16,7 @@ public class GameRepository : IGameRepository
     public async Task Add(Game game) => await _dataBaseContext.Games.AddAsync(game);
 
     public async Task<List<Game>> GetAll() => await _dataBaseContext.Games.ToListAsync();
-    public async Task<List<Game>> GetAllMyRunningGames(Guid userId) => await _dataBaseContext.Games.Include(f=>f.Gamers).Where(f=>f.Gamers.Any(g=>g.UserId == userId) && f.EndedAt == null).ToListAsync();
+    public async Task<List<Game>> GetAllMyRunningGames(Guid userId) => await _dataBaseContext.Games.Include(f=>f.Gamers).ThenInclude(f=>f.User).ThenInclude(f=>f.Avatar).Where(f=>f.Gamers.Any(g=>g.UserId == userId) && f.EndedAt == null).ToListAsync();
 
     public async Task<Game> CheckOpenGameToJoin() =>
         await _dataBaseContext.Games.FirstOrDefaultAsync(f => f.MatchClients == false);

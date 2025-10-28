@@ -8,4 +8,8 @@ public class GetAllMyRunningGamesQueryResult
     public int CountOfJoinedClients { get; set; }
     public int RoundNumber { get; set; }
     public bool IsYourTurn { get; set; }
+    public int SpentHours { get; set; }
+    public int SpentMinutes { get; set; }
+    public string OpponentAvatar { get; set; }
+    public string OpponentUsername { get; set; }
 }

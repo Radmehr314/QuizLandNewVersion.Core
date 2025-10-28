@@ -42,7 +42,7 @@ public static class UserMapper
         {
             Id = user.Id,
             Username = user.Username,
-            AvatarPath = user.Avatar.FilePath,
+            AvatarPath = user.Avatar.FilePath.Replace('\\', '/'),
             PhoneNumber = user.PhoneNumber,
             Coin = user.Coin,
             XP = user.XP

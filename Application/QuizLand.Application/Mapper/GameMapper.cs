@@ -19,17 +19,42 @@ public static class GameMapper
         };
     }
 
-    public static List<GetAllMyRunningGamesQueryResult> GetAllMyRunningGamesMapper(this List<Game> games,Guid userId)
+    public static List<GetAllMyRunningGamesQueryResult> GetAllMyRunningGamesMapper(
+        this List<Game> games, Guid userId)
     {
-        return games.Select(f => new GetAllMyRunningGamesQueryResult()
+        var nowDate = DateTime.Now;
+
+        return games.Select(f =>
         {
-            Id = f.Id,
-            Type = f.Type,
-            StartedAt = f.StartedAt,
-            CountOfJoinedClients = f.CountOfJoinedClients,
-            RoundNumber = f.RoundNumber,
-            IsYourTurn =  (f.UserTurnId != null && f.UserTurnId == userId ? true : false)
+            // StartedAt را سریع به UTC ببریم (Local → UTC ، Unspecified هم مثل Local فرض می‌شود)
+            var startedAtDate = f.StartedAt;
+
+            var elapsed = nowDate - startedAtDate;
+            if (elapsed < TimeSpan.Zero) elapsed = TimeSpan.Zero;
+
+            return new GetAllMyRunningGamesQueryResult
+            {
+                Id = f.Id,
+                Type = f.Type,
+                StartedAt = f.StartedAt,
+                CountOfJoinedClients = f.CountOfJoinedClients,
+                RoundNumber = f.RoundNumber,
+                IsYourTurn = (f.UserTurnId != null && f.UserTurnId == userId),
+                SpentHours = (int)elapsed.TotalHours,                 // کل ساعت‌ها
+                SpentMinutes = (int)(elapsed.TotalMinutes % 60),       // دقیقه‌ی باقیمانده 0..59
+                OpponentAvatar = (f.CountOfJoinedClients == 2 && f.Type == 1 ? f.Gamers.Where(f=>f.UserId != userId).FirstOrDefault().User.Avatar.FilePath.Replace('\\', '/')  :f.Gamers.Where(f=>f.UserId == userId).FirstOrDefault().User.Avatar.FilePath.Replace('\\', '/')  ),
+                OpponentUsername = (f.CountOfJoinedClients == 2 ? f.Gamers.Where(f=>f.UserId != userId).FirstOrDefault().User.Username : "در انتظار حریف")
+            };
         }).ToList();
+    }
+
+
+    private static string ToAgoText(TimeSpan ts)
+    {
+        if (ts.TotalSeconds < 60) return $"{ts.Seconds} ثانیه پیش";
+        if (ts.TotalMinutes < 60) return $"{(int)ts.TotalMinutes} دقیقه پیش";
+        if (ts.TotalHours   < 24) return $"{(int)ts.TotalHours} ساعت پیش";
+        return $"{(int)ts.TotalDays} روز پیش";
     }
 
     public static GetGameByIdQueryResult GetGameByIdMapper(this Game game,Guid userId)
