@@ -43,7 +43,6 @@ public class GameRepository : IGameRepository
     {
         var gamers = await _dataBaseContext.Gamers
             .Where(g => g.GameId == gameId)
-            .Select(g => new { g.Id, g.IsOwner, g.UserId })
             .ToListAsync();
 
         var owner = gamers.Single(g => g.IsOwner);
@@ -69,8 +68,8 @@ public class GameRepository : IGameRepository
             winnerUserId = ownerCorrect > guestCorrect ? owner.UserId : guest.UserId;
         
         return new IGameRepository.GameCorrectAnswerResult(
-            owner.Id, ownerCorrect,
-            guest.Id, guestCorrect,
+            owner, ownerCorrect,
+            guest, guestCorrect,
             winnerUserId
         );
     }

@@ -35,7 +35,11 @@ public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>
                 GameId = MatchFound.gameId.Value,
                 Username = MatchFound.Username,
             };
-            await _realTimeNotifier.SendToUserAsync(userId.ToString(),"GameMatched",new {GameInfo = gameMatchedDto, at = DateTime.UtcNow});
+
+            var oppenentId =
+                await _unitOfWork.GamerRepository.GetOpponentUserIdByUserAndGameId(MatchFound.gameId.Value, userId);
+            
+            await _realTimeNotifier.SendToUserAsync(oppenentId.ToString(),"GameMatched",new {GameInfo = gameMatchedDto, at = DateTime.UtcNow});
             return new CommandResult() { Id = MatchFound.gameId };
         }
          var newGameId = await GameGeneratorForTwoPlayer(command, userId);

@@ -35,6 +35,12 @@ public class GamerRepository : IGamerRepository
         return gs.Single(id => id != currentGamerId);
     }
 
+    public async Task<Guid> GetOpponentUserIdByUserAndGameId(Guid gameId, Guid userId)
+    {
+        var gs = await _dataBaseContext.Gamers.Where(g => g.GameId == gameId).ToListAsync();
+        return gs.FirstOrDefault(id => id.UserId != userId).UserId;
+    }
+
     public async Task<(Gamer owner, Gamer guest)> GetPlayersAsync(Guid gameId)
     {
         var gamers = await _dataBaseContext.Gamers

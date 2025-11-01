@@ -1,4 +1,6 @@
 ﻿
+using QuizLand.Domain.Models.Gamers;
+
 namespace QuizLand.Domain.Models.Games;
 
 public interface IGameRepository
@@ -14,8 +16,8 @@ public interface IGameRepository
     Task CompleteGame(Guid gameId, Guid? winnerUserId);
     Task<GameCorrectAnswerResult> GetWinnerByCorrectAnswers(Guid gameId);
     public sealed record GameCorrectAnswerResult(
-        Guid OwnerGamerId, int OwnerCorrect,
-        Guid GuestGamerId, int GuestCorrect,
+        Gamer OwnerGamer, int OwnerCorrect,
+        Gamer GuestGamer, int GuestCorrect,
         Guid? WinnerUserId 
     );
 }

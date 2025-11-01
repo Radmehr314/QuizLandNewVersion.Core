@@ -13,11 +13,14 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserInfoService _userInfoService;
+    private readonly IRealTimeNotifier _realTimeNotifier;
 
-    public RoundQuestionAnswerCommandHandler(IUnitOfWork unitOfWork, IUserInfoService userInfoService)
+
+    public RoundQuestionAnswerCommandHandler(IUnitOfWork unitOfWork, IUserInfoService userInfoService, IRealTimeNotifier realTimeNotifier)
     {
         _unitOfWork = unitOfWork;
         _userInfoService = userInfoService;
+        _realTimeNotifier = realTimeNotifier;
     }
     public async Task<CommandResult> Handle(SubmitRoundQuestionAnswersCommand command)
     {
@@ -92,6 +95,8 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
             {
                 round.RoundStatus = RoundStatus.AwaitingP2;
                 game.UserTurnId = opponentUserId.UserId;
+                await _realTimeNotifier.SendToUserAsync(opponentUserId.UserId.ToString(),"WaitingForMyAnswer",new {GameId = command.GameId,RoundNumber = command.RoundNumber, at = DateTime.UtcNow});
+
             }
             else
             {
@@ -103,12 +108,11 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                 if (round.RoundNumber < 4)
                 {
                     // ساخت راند بعد و تغییر SelectingGamer
-                    var opponentId = await _unitOfWork.GamerRepository.GetOpponentId(command.GameId, caller.Id);
                     var next = new Round
                     {
                         GameId = round.GameId,
                         RoundNumber = round.RoundNumber + 1,
-                        SelectingGamerId = opponentId,
+                        SelectingGamerId = caller.Id,
                         RoundStatus = RoundStatus.PendingCourse,
                         CreateAt = DateTime.Now
                     };
@@ -116,6 +120,8 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                     nextRoundNo = next.RoundNumber;
                     game.RoundNumber++;
                     game.UserTurnId = userId;
+                    await _realTimeNotifier.SendToUserAsync(userId.ToString(),"PickCourse",new {GameId = command.GameId,RoundNumber = command.RoundNumber, at = DateTime.UtcNow});
+
 
                 }
                 else
@@ -129,12 +135,22 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                     {
                         var (owner, guest) = await _unitOfWork.GamerRepository.GetPlayersAsync(command.GameId);
                         winnerUserId = (stats.WinnerUserId.Value == owner.Id) ? owner.UserId : guest.UserId;
+                        await _realTimeNotifier.SendToUserAsync(winnerUserId.ToString(),"Winning",new {GameId = command.GameId, at = DateTime.UtcNow});
+                        await _realTimeNotifier.SendToUserAsync((winnerUserId == stats.OwnerGamer.UserId ? stats.GuestGamer.UserId.ToString() : stats.OwnerGamer.UserId.ToString()),"Failing",new {GameId = command.GameId, at = DateTime.UtcNow});
+
+                    }
+                    else
+                    {
+                        await _realTimeNotifier.SendToUserAsync(stats.OwnerGamer.UserId.ToString(),"Tie",new {GameId = command.GameId, at = DateTime.UtcNow});
+                        await _realTimeNotifier.SendToUserAsync(stats.GuestGamer.UserId.ToString(),"Tie",new {GameId = command.GameId, at = DateTime.UtcNow});
+
                     }
                     
                     game.WinnerUserId = winnerUserId;   // nullable برای مساوی
                     game.EndedAt = DateTime.Now;
                     gameCompleted = true;
                     game.UserTurnId = null;
+                    
 
                 }
             }

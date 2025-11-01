@@ -8,5 +8,6 @@ public interface IGamerRepository
     Task<Gamer> GetGamerByClientandGame(Guid gameId, Guid userId);
     Task<List<Gamer>> GetGamersByGameId(Guid gameId);
     Task<Guid> GetOpponentId(Guid gameId, Guid currentGamerId);
+    Task<Guid> GetOpponentUserIdByUserAndGameId(Guid gameId, Guid userId);
     Task<(Gamer owner, Gamer guest)> GetPlayersAsync(Guid gameId);
 }
