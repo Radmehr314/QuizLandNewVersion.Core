@@ -59,11 +59,11 @@ public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>
         game.CountOfJoinedClients = 2;
         game.MatchClients = true;
 
-            
-        var opponent = game.Gamers.FirstOrDefault();
-        if (opponent != null && opponent.User != null)
+
+        var opponent = await _unitOfWork.UserRepository.GetById(UserId);
+        if (opponent != null && opponent != null)
         {
-            opponentUsername = opponent.User.Username;
+            opponentUsername = opponent.Username;
         }
      
         await _unitOfWork.GamerRepository.Add(UserId.AddSecondGamer(game.Id));
