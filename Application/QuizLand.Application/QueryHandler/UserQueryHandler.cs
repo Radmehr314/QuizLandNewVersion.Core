@@ -17,7 +17,7 @@ using QuizLand.Application.Mapper;
 namespace QuizLand.Application.QueryHandler;
 
 public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHandler<GetCodeQuery,GetCodeQueryResult>,IQueryHandler<CountOfOnlineUserQuery,CountOfOnlineUserQueryResult>,IQueryHandler<CountAllUserQuery,CountAllUserQueryResult>,IQueryHandler<GetCodeForForgetPasswordQuery,GetCodeForForgetPasswordQueryResult>
-,IQueryHandler<GetLoginUserInfoQuery,GetLoginUserInfoQueryResult>
+,IQueryHandler<GetLoginUserInfoQuery,GetLoginUserInfoQueryResult>,IQueryHandler<GetCodeForUserValidationQuery,GetCodeForUserValidationQueryResult>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITokenService _tokenService;
@@ -78,6 +78,7 @@ public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHa
         var user = await _unitOfWork.UserRepository.GetByUsername(query.Username);
         if (user is null)
             throw new NotFoundException("نام کاربری  یا رمز عبور نامعتبر میباشد!!!");
+        if (!user.IsVerified) throw new UserAccessException("کاربر مورد نظر معتبر نیست است!!!");
 
         var pepper = _config["Security:Pepper"]
                      ?? throw new InvalidOperationException("Missing Security:Pepper");
@@ -130,13 +131,13 @@ public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHa
         };
     }
     
-    public async Task<int> GenerateUniqueCode(string username)
+    public async Task<int> GenerateUniqueCode(string usernameOrPhoneNumber)
     {
         int code;
         while (true)
         {
             code = RandomNumberGenerator.GetInt32(10000, 100000);
-            var exist  =await _unitOfWork.CodeLogsRepository.GetByUsername(username, code.ToString());
+            var exist  =await _unitOfWork.CodeLogsRepository.GetByUsernameOrPhoneNumber(usernameOrPhoneNumber, code.ToString());
             if (exist is null)
                 break;
         }
@@ -189,5 +190,20 @@ public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHa
     {
         var user = await _unitOfWork.UserRepository.GetById(_userInfoService.GetUserIdByToken());
         return user.LoginUserInfoMapper();
+    }
+
+    public async Task<GetCodeForUserValidationQueryResult> Handle(GetCodeForUserValidationQuery query)
+    {
+        var user = await _unitOfWork.UserRepository.GetByPhoneNumber(query.PhoneNumber);
+        if (user is null) throw new NotFoundException("همچین کاربری وجود ندارد!!!");
+        var code = await GenerateUniqueCode(user.Username);
+        await _unitOfWork.CodeLogsRepository.Add(query.UserValidationMapper(code.ToString()));
+        await _unitOfWork.Save();
+        
+        var send = await _smsService.SendCode(query.PhoneNumber, code.ToString());
+        return new GetCodeForUserValidationQueryResult()
+        {
+            IsSmsProviderEnabled = send,
+        };
     }
 }

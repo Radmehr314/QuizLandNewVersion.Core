@@ -14,11 +14,11 @@ public class CodeLogsRepository : ICodeLogsRepository
     }
     public async Task Add(CodeLogs codeLogs) => await _databaseContext.AddAsync(codeLogs);
 
-    public async Task<CodeLogs> GetByUsername(string username, string code) => await _databaseContext.CodeLogs.FirstOrDefaultAsync(f=>f.Username == username && code == f.Otp);
- 
-    public async Task<List<CodeLogs>> GetAllByUsername(int pageNumber, int size, string username) => await _databaseContext.CodeLogs.Where(f=>f.Username == username).Skip(Helper.CalculateSkip(pageNumber, size)).Take(size).ToListAsync();
+    public async Task<CodeLogs> GetByUsernameOrPhoneNumber(string usernameOrPhoneNumber, string code) => await _databaseContext.CodeLogs.FirstOrDefaultAsync(f=>f.UsernameOrPhoneNumber == usernameOrPhoneNumber && code == f.Otp);
 
-    public async Task<long> CountByUsername(string username) => await _databaseContext.CodeLogs.Where(f=>f.Username == username).LongCountAsync();
+    public async Task<List<CodeLogs>> GetAllByUsername(int pageNumber, int size, string username) => await _databaseContext.CodeLogs.Where(f=>f.UsernameOrPhoneNumber == username).Skip(Helper.CalculateSkip(pageNumber, size)).Take(size).ToListAsync();
+
+    public async Task<long> CountByUsername(string username) => await _databaseContext.CodeLogs.Where(f=>f.UsernameOrPhoneNumber == username).LongCountAsync();
 
     public async Task<List<CodeLogs>> GetAllByUsername(string username) =>
         await _databaseContext.CodeLogs.ToListAsync();

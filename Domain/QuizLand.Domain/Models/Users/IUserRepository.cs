@@ -13,6 +13,7 @@ public interface IUserRepository
     Task<long> Count();
     Task<bool> UserExists(string username);
     Task<long> CountByOnlineUsers();
+    Task DeleteUser(Guid id);
     
     
 }

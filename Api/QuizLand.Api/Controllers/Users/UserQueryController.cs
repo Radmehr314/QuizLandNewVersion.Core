@@ -90,6 +90,14 @@ public class UserQueryController : BaseQueryController
         return Ok(await Bus.Dispatch<GetCodeForForgetPasswordQuery,GetCodeForForgetPasswordQueryResult>(query));
     }
     
+    [HttpGet("GetCodeForUserValidation")]
+    public async Task<ActionResult<GetCodeForUserValidationQueryResult>> GetAllPagination(
+        [FromQuery]GetCodeForUserValidationQuery  query)
+    {
+        return Ok(await Bus.Dispatch<GetCodeForUserValidationQuery,GetCodeForUserValidationQueryResult>(query));
+    }
+    
+    
     /*[HttpGet("GetUserByPersonelCode")]
     public async Task<ActionResult<GetUserByPersonelCodeQueryResult>> GetAllPagination(
         [FromQuery]GetUserByPersonelCodeQuery  query)

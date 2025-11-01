@@ -18,7 +18,7 @@ public static class CodeLogMapper
             Device = query.Device,
             Otp = otp,
             State = State.Register,
-            Username = query.Username,      
+            UsernameOrPhoneNumber = query.Username,      
             SendedAt = DateTime.Now,
             IsUsed =  true,
         };
@@ -32,17 +32,32 @@ public static class CodeLogMapper
             Device = query.Device,
             Otp = otp,
             State = State.Forgot,
-            Username = username,      
+            UsernameOrPhoneNumber = username,      
+            SendedAt = DateTime.Now,
+            IsUsed = false,
+        };
+        
+    }
+    
+    public static CodeLogs UserValidationMapper(this GetCodeForUserValidationQuery query,string otp)
+    {
+        return new CodeLogs()
+        {
+            Device = query.Device,
+            Otp = otp,
+            State = State.VerifyUser,
+            UsernameOrPhoneNumber = query.PhoneNumber,      
             SendedAt = DateTime.Now,
             IsUsed = false,
         };
     }
 
+
     
     public static List<GetAllCodeQueryResult> GetAllMapper(this List<CodeLogs> codeLogs)
     {
         return codeLogs
-            .Select(f => new GetAllCodeQueryResult() {Id = f.Id, Device = f.Device,Otp = f.Otp,Username = f.Username,IsUsed = f.IsUsed ,SendedAt = f.SendedAt,PersianSendedAt = f.SendedAt.ToShamsiString(),State = f.State.ToFa()})
+            .Select(f => new GetAllCodeQueryResult() {Id = f.Id, Device = f.Device,Otp = f.Otp,Username = f.UsernameOrPhoneNumber,IsUsed = f.IsUsed ,SendedAt = f.SendedAt,PersianSendedAt = f.SendedAt.ToShamsiString(),State = f.State.ToFa()})
             .ToList();
     }
     

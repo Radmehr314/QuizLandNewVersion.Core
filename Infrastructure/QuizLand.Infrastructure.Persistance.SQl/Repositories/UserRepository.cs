@@ -33,4 +33,5 @@ public class UserRepository : IUserRepository
 
 
     public async Task<long> CountByOnlineUsers()=> await _dataBaseContext.Users.LongCountAsync(f => f.IsOnline);
+    public async Task DeleteUser(Guid id) => _dataBaseContext.Remove(await GetById(id));
 }

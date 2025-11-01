@@ -28,6 +28,7 @@ public class User:BaseEntity<Guid>
     public string ActiveDeviceId { get; set; }
     public long TokenVersion { get; set; } = 1;
     public bool IsBan { get; set; } = false;
+    public bool IsVerified { get; set; }  = false;
     public Avatar? Avatar { get; set; }
     public IEnumerable<Game> Games { get; set; }
     public IEnumerable<Game> MyTurnGames { get; set; }

@@ -69,4 +69,10 @@ public class UserCommandController : BaseCommandController
     {
         return Ok(await Bus.Dispatch(command));
     }
+    
+    [HttpPost("UserValidation")]
+    public async Task<ActionResult<CommandResult>> UserValidation([FromBody] VerifyUserCommand command)
+    {
+        return Ok(await Bus.Dispatch(command));
+    }
 }

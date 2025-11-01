@@ -19,6 +19,7 @@ namespace QuizLand.Application.CommandHandler;
 
 public class UserCommandHandler:ICommandHandler<UpdateUserCommand>,ICommandHandler<DeleteUserCommand>,ICommandHandler<RegisterUserCommand>
     ,ICommandHandler<MakeOnlineUserCommand>,ICommandHandler<MakeOfflineUserCommand>,ICommandHandler<ForgetPasswordCommand>,ICommandHandler<UserStatusComamnd>
+    ,ICommandHandler<VerifyUserCommand>
 
 {
 
@@ -70,6 +71,11 @@ public class UserCommandHandler:ICommandHandler<UpdateUserCommand>,ICommandHandl
     public async Task<CommandResult> Handle(RegisterUserCommand command)
     {
         var existUserName  = await _unitOfWork.UserRepository.GetByUsername(command.Username);
+        if (existUserName.IsVerified == false)
+        {
+            await _unitOfWork.UserRepository.Delete(existUserName.Id);
+            await _unitOfWork.Save();
+        }
         if (existUserName is not null) throw new NotFoundException(" نام کاربری تکراری است!!!");
         var existPhoneNumber  = await _unitOfWork.UserRepository.GetByPhoneNumber(command.PhoneNumber);
         if (existPhoneNumber is not null) throw new NotFoundException(" شماره تماس  تکراری است!!!");
@@ -115,7 +121,7 @@ public class UserCommandHandler:ICommandHandler<UpdateUserCommand>,ICommandHandl
         }
     }
 
-    public async Task<CodeLogs> VerifyOtp(string otp, string username) => await _unitOfWork.CodeLogsRepository.GetByUsername(username , otp);
+    public async Task<CodeLogs> VerifyOtp(string otp, string username) => await _unitOfWork.CodeLogsRepository.GetByUsernameOrPhoneNumber(username , otp);
 
 
     public async Task<CommandResult> Handle(MakeOnlineUserCommand command)
@@ -154,7 +160,7 @@ public class UserCommandHandler:ICommandHandler<UpdateUserCommand>,ICommandHandl
             throw new ValidationException("DeviceId الزامی است.");
 
        
-        var code  = await _unitOfWork.CodeLogsRepository.GetByUsername(user.Username,command.Otp);
+        var code  = await _unitOfWork.CodeLogsRepository.GetByUsernameOrPhoneNumber(user.Username,command.Otp);
         code.IsUsed = true;
 
         user.ActiveDeviceId = command.DeviceId;
@@ -206,11 +212,25 @@ public class UserCommandHandler:ICommandHandler<UpdateUserCommand>,ICommandHandl
         while (true)
         {
             code = RandomNumberGenerator.GetInt32(10000, 100000);
-            var exist  =await _unitOfWork.CodeLogsRepository.GetByUsername(username, code.ToString());
+            var exist  =await _unitOfWork.CodeLogsRepository.GetByUsernameOrPhoneNumber(username, code.ToString());
             if (exist is null)
                 break;
         }
         return code;
     }
-    
+
+    public async Task<CommandResult> Handle(VerifyUserCommand command)
+    {
+        var user =  await _unitOfWork.UserRepository.GetByPhoneNumber(command.PhoneNumber);
+        if (user is null) throw new NotFoundException("کاربر یات نشد");
+        if (user.IsVerified == true) throw new UserAccessException("کاربر قبلا اعتبار سنجی شده ست");
+        
+        var otpValidation =await VerifyOtp(command.Otp, command.PhoneNumber);
+        if (otpValidation is null || otpValidation.IsUsed || otpValidation.SendedAt.AddMinutes(2) <= DateTime.Now)
+            throw new UserAccessException("کد منقضی شده است");
+        user.IsVerified = true;
+        await _unitOfWork.Save();
+        return new CommandResult(){Id = user.Id};
+
+    }
 }

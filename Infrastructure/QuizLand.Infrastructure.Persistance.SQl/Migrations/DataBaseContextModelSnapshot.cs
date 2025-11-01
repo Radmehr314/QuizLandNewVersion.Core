@@ -64,7 +64,7 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Property<int>("State")
                         .HasColumnType("int");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("UsernameOrPhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -541,6 +541,9 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsOnline")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
