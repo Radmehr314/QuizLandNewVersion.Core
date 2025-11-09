@@ -1,5 +1,6 @@
 ﻿using QuizLand.Application.Contract.Commands.Course;
 using QuizLand.Application.Contract.QueryResults.Course;
+using QuizLand.Domain.Dtos.Course;
 using QuizLand.Domain.Models.Courses;
 
 namespace QuizLand.Application.Mapper;
@@ -39,9 +40,9 @@ public static class CourseMapper
         };
     }
     
-    public static List<GetAllAvailableCourseQueryResult> GetUnpickedCoursesMapper(this List<Course> courses)
+    public static List<GetAllAvailableCourseQueryResult> GetUnpickedCoursesMapper(this List<GetAvailableCoursesDto> courses)
     {
-        return courses.Select(f => new GetAllAvailableCourseQueryResult() { Id = f.Id, Title = f.Title }).ToList();
+        return courses.Select(f => new GetAllAvailableCourseQueryResult() { Id = f.Id, Title = f.Title,IsAvailable = f.IsAvailable}).ToList();
 
     }
     

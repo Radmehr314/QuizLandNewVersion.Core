@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using QuizLand.Domain.Dtos.Course;
 using QuizLand.Domain.Models.Courses;
 using QuizLand.Infrastructure.Persistance.SQl.FrameWork;
 
@@ -17,9 +18,18 @@ public class CourseRepository : ICourseRepository
     public async Task<List<Course>> GetAllCoursesPagination(int pageNumber, int size) => await _dataBaseContext.Courses.OrderByDescending(i => i.Id).Skip(Helper.CalculateSkip(pageNumber, size)).Take(size).ToListAsync();
     public async Task<List<Course>> GetAllCourses() => await _dataBaseContext.Courses.ToListAsync();
     public async Task<Course> GetById(long id) => await _dataBaseContext.Courses.Include(f=>f.Questions).FirstOrDefaultAsync(f=>f.Id == id);
-    public async Task<List<Course>> UnPickedCourses(Guid gameId) => await _dataBaseContext.Courses
-            .Where(c => !_dataBaseContext.Rounds
-                .Any(r => r.GameId == gameId && r.CourseId == c.Id))
+
+    public Task<List<GetAvailableCoursesDto>> UnPickedCourses(Guid gameId) =>
+        _dataBaseContext.Courses
+            .Select(c => new GetAvailableCoursesDto
+            {
+                Id = c.Id,
+                Title = c.Title,
+                IsAvailable = !_dataBaseContext.Rounds
+                    .Any(r => r.GameId == gameId && r.CourseId == c.Id)
+            })
+            .OrderByDescending(x => x.IsAvailable) // اول قابل‌انتخاب‌ها
+            .ThenBy(x => x.Title)
             .ToListAsync();
 
 

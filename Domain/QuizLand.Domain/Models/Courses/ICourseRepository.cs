@@ -1,4 +1,6 @@
-﻿namespace QuizLand.Domain.Models.Courses;
+﻿using QuizLand.Domain.Dtos.Course;
+
+namespace QuizLand.Domain.Models.Courses;
 
 public interface ICourseRepository
 {
@@ -6,7 +8,7 @@ public interface ICourseRepository
     Task DeleteCourse(long id);
     Task<List<Course>> GetAllCoursesPagination(int pageNumber, int size);
     Task<Course> GetById(long id);
-    Task<List<Course>> UnPickedCourses(Guid gameId);
+    Task<List<GetAvailableCoursesDto>> UnPickedCourses(Guid gameId);
     Task<long> Count();
     Task<List<Course>> GetAllCourses();
 }

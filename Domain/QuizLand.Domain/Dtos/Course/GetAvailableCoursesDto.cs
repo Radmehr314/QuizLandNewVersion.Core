@@ -1,6 +1,6 @@
-﻿namespace QuizLand.Application.Contract.QueryResults.Course;
+﻿namespace QuizLand.Domain.Dtos.Course;
 
-public class GetAllAvailableCourseQueryResult
+public class GetAvailableCoursesDto
 {
     public long Id { get; set; }
     public string Title { get; set; }
