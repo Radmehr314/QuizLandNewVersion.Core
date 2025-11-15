@@ -194,9 +194,9 @@ public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHa
 
     public async Task<GetCodeForUserValidationQueryResult> Handle(GetCodeForUserValidationQuery query)
     {
-        var user = await _unitOfWork.UserRepository.GetByPhoneNumber(query.PhoneNumber);
-        if (user is null) throw new NotFoundException("همچین کاربری وجود ندارد!!!");
-        var code = await GenerateUniqueCode(user.Username);
+        /*var user = await _unitOfWork.UserRepository.GetByPhoneNumber(query.PhoneNumber);
+        if (user is null) throw new NotFoundException("همچین کاربری وجود ندارد!!!");*/
+        var code = await GenerateUniqueCode(query.PhoneNumber);
         await _unitOfWork.CodeLogsRepository.Add(query.UserValidationMapper(code.ToString()));
         await _unitOfWork.Save();
         

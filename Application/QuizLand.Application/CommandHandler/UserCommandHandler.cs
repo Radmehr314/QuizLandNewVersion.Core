@@ -71,15 +71,17 @@ public class UserCommandHandler:ICommandHandler<UpdateUserCommand>,ICommandHandl
     public async Task<CommandResult> Handle(RegisterUserCommand command)
     {
         var existUserName  = await _unitOfWork.UserRepository.GetByUsername(command.Username);
-        if (existUserName.IsVerified == false)
-        {
-            await _unitOfWork.UserRepository.Delete(existUserName.Id);
-            await _unitOfWork.Save();
-        }
         if (existUserName is not null) throw new NotFoundException(" نام کاربری تکراری است!!!");
         var existPhoneNumber  = await _unitOfWork.UserRepository.GetByPhoneNumber(command.PhoneNumber);
         if (existPhoneNumber is not null) throw new NotFoundException(" شماره تماس  تکراری است!!!");
         if (!Regex.IsMatch(command.PhoneNumber ?? "", @"^09\d{9}$")) throw new ValidationException("شماره تماس نامعتبر است!!!");
+
+        
+        var otpValidation =await VerifyOtp(command.Otp, command.PhoneNumber);
+        if (otpValidation is null || otpValidation.IsUsed || otpValidation.SendedAt.AddMinutes(2) <= DateTime.Now)
+            throw new UserAccessException("کد منقضی شده است");
+        await _unitOfWork.Save();
+        
         bool strong = Regex.IsMatch(command.Password ?? "",
             @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s]).{8,}$");
         if (!strong) throw new ValidationException("رمز عبور قوی نیست!!!!");

@@ -2,6 +2,7 @@
 using QuizLand.Domain.Models.Avatars;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
+using QuizLand.Domain.Models.Provinces;
 using QuizLand.Domain.Models.TicketMessages;
 using QuizLand.Domain.Models.Tickets;
 
@@ -28,7 +29,7 @@ public class User:BaseEntity<Guid>
     public string ActiveDeviceId { get; set; }
     public long TokenVersion { get; set; } = 1;
     public bool IsBan { get; set; } = false;
-    public bool IsVerified { get; set; }  = false;
+    public bool IsVerified { get; set; }  = true;
     public Avatar? Avatar { get; set; }
     public IEnumerable<Game> Games { get; set; }
     public IEnumerable<Game> MyTurnGames { get; set; }
@@ -37,4 +38,6 @@ public class User:BaseEntity<Guid>
     
     public IEnumerable<Ticket> Tickets { get; set; }
 
+    public long ProvinceId { get; set; }
+    public Province Province { get; set; }
 }

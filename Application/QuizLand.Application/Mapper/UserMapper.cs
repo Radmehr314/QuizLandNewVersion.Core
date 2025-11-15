@@ -32,7 +32,8 @@ public static class UserMapper
             PhoneNumber = command.PhoneNumber,
             ActiveDeviceId = command.DeviceId,
             IP = command.IP,
-            AvatarId = avatarId
+            AvatarId = avatarId,
+            ProvinceId = command.ProvinceId
         };
     }
 
