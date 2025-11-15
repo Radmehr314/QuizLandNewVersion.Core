@@ -29,6 +29,10 @@ public class RoundQuestionRepository : IRoundQuestionRepository
                 Source = rq.Question.Source,
                 DescriptiveAnswer = rq.Question.DescriptiveAnswer,
                 CorrectOption = rq.Question.CorrectOption,
+                CountClickFirstOption = rq.Question.CountClickFirstOption,
+                CountClickSecondOption = rq.Question.CountClickSecondOption,
+                CountClickThirdOption = rq.Question.CountClickThirdOption,
+                CountClickFourthOption = rq.Question.CountClickFourthOption,
             }
         }).ToListAsync();
 }

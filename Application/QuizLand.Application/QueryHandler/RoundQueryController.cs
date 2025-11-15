@@ -51,7 +51,11 @@ public class RoundQueryController : IQueryHandler<GetRoundQuestionsQuery,GetRoun
             ThirdOption = x.Question.ThirdOption,
             CorrectOption = x.Question.CorrectOption,
             Source = x.Question.Source,
-            DescriptiveAnswer = x.Question.DescriptiveAnswer
+            DescriptiveAnswer = x.Question.DescriptiveAnswer,
+            CountClickFirstOption = x.Question.CountClickFirstOption,
+            CountClickSecondOption = x.Question.CountClickSecondOption,
+            CountClickThirdOption = x.Question.CountClickThirdOption,
+            CountClickFourthOption = x.Question.CountClickFourthOption,
         }).ToList();
         
         var isYourTurn = isP1Turn || isP2Turn;

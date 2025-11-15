@@ -11,4 +11,8 @@ public class GetAllRoundQuestionQueryResult
     public int CorrectOption { get; set; } // 1 2 3 4
     public string Source { get; set; }
     public string DescriptiveAnswer { get; set; }
+    public long? CountClickFirstOption { get; set; }
+    public long? CountClickSecondOption { get; set; }
+    public long? CountClickThirdOption { get; set; }
+    public long? CountClickFourthOption { get; set; }
 }
