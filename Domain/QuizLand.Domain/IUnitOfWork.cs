@@ -4,6 +4,7 @@ using QuizLand.Domain.Models.Courses;
 using QuizLand.Domain.Models.ErrorLogs;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
+using QuizLand.Domain.Models.Provinces;
 using QuizLand.Domain.Models.Questions;
 using QuizLand.Domain.Models.RandQuestionAnswers;
 using QuizLand.Domain.Models.RandQuestions;
@@ -31,6 +32,7 @@ public interface IUnitOfWork
     IRoundRepository RoundRepository { get; set; }
     IRoundQuestionAnswerRepository RoundQuestionAnswerRepository { get; set; }
     IErrorLogRepository ErrorLogRepository { get; set; }
+    IProvinceRepository ProvinceRepository { get; set; }
     Task<int> Save();
 
 }

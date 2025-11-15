@@ -5,6 +5,7 @@ using QuizLand.Domain.Models.Courses;
 using QuizLand.Domain.Models.ErrorLogs;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
+using QuizLand.Domain.Models.Provinces;
 using QuizLand.Domain.Models.Questions;
 using QuizLand.Domain.Models.RandQuestionAnswers;
 using QuizLand.Domain.Models.RandQuestions;
@@ -34,8 +35,9 @@ public class UnitOfWork : IUnitOfWork
     public IRoundRepository RoundRepository { get; set; }
     public IRoundQuestionAnswerRepository RoundQuestionAnswerRepository { get; set; }
     public IErrorLogRepository ErrorLogRepository { get; set; }
+    public IProvinceRepository ProvinceRepository { get; set; }
 
-    public UnitOfWork(DataBaseContext dataBaseContext, IUserRepository userRepository, ICodeLogsRepository codeLogsRepository, ISupporterRepository supporterRepository, ITicketRepository ticketRepository, ITicketMessageRepository ticketMessageRepository, ICourseRepository courseRepository, IQuestionRepository questionRepository, IGameRepository gameRepository, IGamerRepository gamerRepository, IAvatarRepository avatarRepository, IRoundQuestionRepository roundQuestionRepository, IRoundRepository roundRepository, IRoundQuestionAnswerRepository roundQuestionAnswerRepository, IErrorLogRepository errorLogRepository)
+    public UnitOfWork(DataBaseContext dataBaseContext, IUserRepository userRepository, ICodeLogsRepository codeLogsRepository, ISupporterRepository supporterRepository, ITicketRepository ticketRepository, ITicketMessageRepository ticketMessageRepository, ICourseRepository courseRepository, IQuestionRepository questionRepository, IGameRepository gameRepository, IGamerRepository gamerRepository, IAvatarRepository avatarRepository, IRoundQuestionRepository roundQuestionRepository, IRoundRepository roundRepository, IRoundQuestionAnswerRepository roundQuestionAnswerRepository, IErrorLogRepository errorLogRepository, IProvinceRepository provinceRepository)
     {
         _dataBaseContext = dataBaseContext;
         UserRepository = userRepository;
@@ -52,6 +54,7 @@ public class UnitOfWork : IUnitOfWork
         RoundRepository = roundRepository;
         RoundQuestionAnswerRepository = roundQuestionAnswerRepository;
         ErrorLogRepository = errorLogRepository;
+        ProvinceRepository = provinceRepository;
     }
     
     public void Dispose()
