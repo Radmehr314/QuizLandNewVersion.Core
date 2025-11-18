@@ -19,7 +19,7 @@ namespace QuizLand.Application.CommandHandler;
 
 public class UserCommandHandler:ICommandHandler<UpdateUserCommand>,ICommandHandler<DeleteUserCommand>,ICommandHandler<RegisterUserCommand>
     ,ICommandHandler<MakeOnlineUserCommand>,ICommandHandler<MakeOfflineUserCommand>,ICommandHandler<ForgetPasswordCommand>,ICommandHandler<UserStatusComamnd>
-    ,ICommandHandler<VerifyUserCommand>
+    ,ICommandHandler<VerifyUserCommand>,ICommandHandler<ReduceTheCoinForEliminateTwoOptionCommand>,ICommandHandler<ReduceTheCoinForShowThePercentageOfPeopleClickCommand>,ICommandHandler<ReduceTheCoinForStopTimerCommand>,ICommandHandler<ReduceTheCoinForSecondChanceCommand>
 
 {
 
@@ -234,5 +234,41 @@ public class UserCommandHandler:ICommandHandler<UpdateUserCommand>,ICommandHandl
         await _unitOfWork.Save();
         return new CommandResult(){Id = user.Id};
 
+    }
+
+    public async Task<CommandResult> Handle(ReduceTheCoinForEliminateTwoOptionCommand command)
+    {
+        var user  =  await _unitOfWork.UserRepository.GetById(_userInfoService.GetUserIdByToken());
+        if (user.Coin < 40) throw new UserAccessException("سکه مورد نیاز رو ندارید");
+        user.Coin -= 40;
+        await _unitOfWork.Save();
+        return new CommandResult(){Id = user.Id};
+    }
+
+    public async Task<CommandResult> Handle(ReduceTheCoinForShowThePercentageOfPeopleClickCommand command)
+    {
+        var user  =  await _unitOfWork.UserRepository.GetById(_userInfoService.GetUserIdByToken());
+        if (user.Coin < 60) throw new UserAccessException("سکه مورد نیاز رو ندارید");
+        user.Coin -= 60;
+        await _unitOfWork.Save();
+        return new CommandResult(){Id = user.Id};
+    }
+
+    public async Task<CommandResult> Handle(ReduceTheCoinForStopTimerCommand command)
+    {
+        var user  =  await _unitOfWork.UserRepository.GetById(_userInfoService.GetUserIdByToken());
+        if (user.Coin < 10) throw new UserAccessException("سکه مورد نیاز رو ندارید");
+        user.Coin -= 10;
+        await _unitOfWork.Save();
+        return new CommandResult(){Id = user.Id};
+    }
+
+    public async Task<CommandResult> Handle(ReduceTheCoinForSecondChanceCommand command)
+    {
+        var user  =  await _unitOfWork.UserRepository.GetById(_userInfoService.GetUserIdByToken());
+        if (user.Coin < 60) throw new UserAccessException("سکه مورد نیاز رو ندارید");
+        user.Coin -=  60;
+        await _unitOfWork.Save();
+        return new CommandResult(){Id = user.Id};
     }
 }

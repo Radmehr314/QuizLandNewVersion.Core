@@ -70,6 +70,33 @@ public class UserCommandController : BaseCommandController
         return Ok(await Bus.Dispatch(command));
     }
     
+    [HttpPut("ReduceTheCoinForStopTimerCommand")]
+    public async Task<ActionResult<CommandResult>> UserStatus([FromBody] ReduceTheCoinForStopTimerCommand command)
+    {
+        return Ok(await Bus.Dispatch(command));
+    }
+
+    
+    [HttpPut("ReduceTheCoinForSecondChanceCommand")]
+    public async Task<ActionResult<CommandResult>> UserStatus([FromBody] ReduceTheCoinForSecondChanceCommand command)
+    {
+        return Ok(await Bus.Dispatch(command));
+    }
+
+    
+    [HttpPut("ReduceTheCoinForEliminateTwoOptionCommand")]
+    public async Task<ActionResult<CommandResult>> UserStatus([FromBody] ReduceTheCoinForEliminateTwoOptionCommand command)
+    {
+        return Ok(await Bus.Dispatch(command));
+    }
+
+    [HttpPut("ReduceTheCoinForShowThePercentageOfPeopleClickCommand")]
+    public async Task<ActionResult<CommandResult>> UserStatus([FromBody] ReduceTheCoinForShowThePercentageOfPeopleClickCommand command)
+    {
+        return Ok(await Bus.Dispatch(command));
+    }
+
+    
     /*[HttpPost("UserValidation")]
     public async Task<ActionResult<CommandResult>> UserValidation([FromBody] VerifyUserCommand command)
     {
