@@ -10,7 +10,7 @@ using QuizLand.Domain.Models.Games;
 
 namespace QuizLand.Application.CommandHandler;
 
-public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>
+public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>,ICommandHandler<StartOnePlayerGameCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserInfoService _userInfoService;
@@ -61,6 +61,7 @@ public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>
 
 
         var opponent = await _unitOfWork.UserRepository.GetById(UserId);
+        opponent.Coin -= 5;
         if (opponent != null && opponent != null)
         {
             opponentUsername = opponent.Username;
@@ -83,8 +84,31 @@ public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>
         await _unitOfWork.GameRepository.Add(game);
         await _unitOfWork.GamerRepository.Add(gamer);
         await _unitOfWork.RoundRepository.Add(round);
+        var user  =  await _unitOfWork.UserRepository.GetById(userId);
+        user.Coin -= 5;
 
         await _unitOfWork.Save();
         return game.Id;
+    }
+
+    public async Task<CommandResult> Handle(StartOnePlayerGameCommand command)
+    {
+        var userId = _userInfoService.GetUserIdByToken();
+        var canStartNewGame = await _unitOfWork.GameRepository.CanStartNewGame(userId);
+        if (!canStartNewGame) throw new ValidationException("شما 5  بازی در حال اجرا دارید!!!");
+        var game = command.OnePlayerFactory();
+        var gamer = userId.AddFirstGamer(game);
+        var round = game.RoundFactory(gamer);
+
+        game.UserTurnId = _userInfoService.GetUserIdByToken();
+        await _unitOfWork.GameRepository.Add(game);
+        await _unitOfWork.GamerRepository.Add(gamer);
+        await _unitOfWork.RoundRepository.Add(round);
+        var user  =  await _unitOfWork.UserRepository.GetById(userId);
+        user.Coin -= 5;
+
+        await _unitOfWork.Save();
+        return new CommandResult() { Id = game.Id };
+
     }
 }

@@ -18,6 +18,17 @@ public static class GameMapper
             RoundNumber = 1
         };
     }
+    public static Game OnePlayerFactory(this StartOnePlayerGameCommand command)
+    {
+        return new Game()
+        {
+            Type = 2,
+            CountOfJoinedClients = 1,
+            StartedAt = DateTime.Now,
+            MatchClients = true,
+            RoundNumber = 1
+        };
+    }
 
     public static List<GetAllMyRunningGamesQueryResult> GetAllMyRunningGamesMapper(
         this List<Game> games, Guid userId)

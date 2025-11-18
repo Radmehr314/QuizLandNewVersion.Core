@@ -15,7 +15,13 @@ public class GameCommandController : BaseCommandController
     }
 
     [HttpPost("StartTwoPlayerGames")]
-    public async Task<ActionResult<CommandResult>> SendNotification([FromBody]StartTwoPlayerGameCommand command)
+    public async Task<ActionResult<CommandResult>> StartTwoPlayerGames([FromBody]StartTwoPlayerGameCommand command)
+    {
+        return Ok(await Bus.Dispatch(command));
+    }
+    
+    [HttpPost("StartOnePlayerGames")]
+    public async Task<ActionResult<CommandResult>> StartOnePlayerGames([FromBody]StartOnePlayerGameCommand command)
     {
         return Ok(await Bus.Dispatch(command));
     }

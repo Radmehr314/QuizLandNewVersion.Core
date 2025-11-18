@@ -93,10 +93,31 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
             var opponentUserId = game.Gamers.Where(f => f.UserId != userId).FirstOrDefault();
             if (round.RoundStatus == RoundStatus.AwaitingP1)
             {
-                round.RoundStatus = RoundStatus.AwaitingP2;
-                game.UserTurnId = opponentUserId.UserId;
-                await _realTimeNotifier.SendToUserAsync(opponentUserId.UserId.ToString(),"WaitingForMyAnswer",new {GameId = command.GameId,RoundNumber = command.RoundNumber, at = DateTime.UtcNow});
+                if (game.Type != 2)
+                {
+                    round.RoundStatus = RoundStatus.AwaitingP2;
+                    game.UserTurnId = opponentUserId.UserId;
+                    await _realTimeNotifier.SendToUserAsync(opponentUserId.UserId.ToString(),"WaitingForMyAnswer",new {GameId = command.GameId,RoundNumber = command.RoundNumber, at = DateTime.UtcNow});
 
+                }
+                round.RoundStatus = RoundStatus.Completed;
+                round.CompletedAt = DateTime.Now;
+                roundCompleted = true;
+                await _unitOfWork.Save();
+                
+                var next = new Round
+                {
+                    GameId = round.GameId,
+                    RoundNumber = round.RoundNumber + 1,
+                    SelectingGamerId = caller.Id,
+                    RoundStatus = RoundStatus.PendingCourse,
+                    CreateAt = DateTime.Now
+                };
+                await _unitOfWork.RoundRepository.Add(next);
+                nextRoundNo = next.RoundNumber;
+                game.RoundNumber++;
+                game.UserTurnId = caller.Id;
+                
             }
             else
             {
@@ -127,29 +148,42 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                 else
                 {
                     // راند ۴ تمام ⇒ پایان بازی
-                    
-                    var stats = await _unitOfWork.GameRepository
-                        .GetWinnerByCorrectAnswers(command.GameId);
-                    Guid? winnerUserId = null;
-                    if (stats.WinnerUserId.HasValue)
+                    if (game.Type != 2)
                     {
-                        var (owner, guest) = await _unitOfWork.GamerRepository.GetPlayersAsync(command.GameId);
-                        winnerUserId = (stats.WinnerUserId.Value == owner.Id) ? owner.UserId : guest.UserId;
-                        await _realTimeNotifier.SendToUserAsync(winnerUserId.ToString(),"Winning",new {GameId = command.GameId, at = DateTime.UtcNow});
-                        await _realTimeNotifier.SendToUserAsync((winnerUserId == stats.OwnerGamer.UserId ? stats.GuestGamer.UserId.ToString() : stats.OwnerGamer.UserId.ToString()),"Failing",new {GameId = command.GameId, at = DateTime.UtcNow});
+                        var stats = await _unitOfWork.GameRepository
+                            .GetWinnerByCorrectAnswers(command.GameId);
+                        Guid? winnerUserId = null;
+                        if (stats.WinnerUserId.HasValue)
+                        {
+                            var (owner, guest) = await _unitOfWork.GamerRepository.GetPlayersAsync(command.GameId);
+                            winnerUserId = (stats.WinnerUserId.Value == owner.Id) ? owner.UserId : guest.UserId;
+                            await _realTimeNotifier.SendToUserAsync(winnerUserId.ToString(),"Winning",new {GameId = command.GameId, at = DateTime.UtcNow});
+                            await _realTimeNotifier.SendToUserAsync((winnerUserId == stats.OwnerGamer.UserId ? stats.GuestGamer.UserId.ToString() : stats.OwnerGamer.UserId.ToString()),"Failing",new {GameId = command.GameId, at = DateTime.UtcNow});
+                            var user  = await _unitOfWork.UserRepository.GetById(winnerUserId.Value);
+                            user.Coin += 5;
+                            user.XP += 5;
+                        }
+                        else
+                        {
+                            await _realTimeNotifier.SendToUserAsync(stats.OwnerGamer.UserId.ToString(),"Tie",new {GameId = command.GameId, at = DateTime.UtcNow});
+                            await _realTimeNotifier.SendToUserAsync(stats.GuestGamer.UserId.ToString(),"Tie",new {GameId = command.GameId, at = DateTime.UtcNow});
+
+                        }
+                    
+                        game.WinnerUserId = winnerUserId;   // nullable برای مساوی
+                        game.EndedAt = DateTime.Now;
+                        gameCompleted = true;
+                        game.UserTurnId = null;
 
                     }
                     else
                     {
-                        await _realTimeNotifier.SendToUserAsync(stats.OwnerGamer.UserId.ToString(),"Tie",new {GameId = command.GameId, at = DateTime.UtcNow});
-                        await _realTimeNotifier.SendToUserAsync(stats.GuestGamer.UserId.ToString(),"Tie",new {GameId = command.GameId, at = DateTime.UtcNow});
-
+                        Guid? winnerUserId = caller.Id;
+                        game.WinnerUserId = winnerUserId;
+                        game.EndedAt = DateTime.Now;
+                        game.UserTurnId = null;
                     }
                     
-                    game.WinnerUserId = winnerUserId;   // nullable برای مساوی
-                    game.EndedAt = DateTime.Now;
-                    gameCompleted = true;
-                    game.UserTurnId = null;
                     
 
                 }

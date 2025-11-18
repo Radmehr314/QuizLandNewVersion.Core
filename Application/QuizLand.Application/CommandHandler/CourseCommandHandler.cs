@@ -53,6 +53,7 @@ public class CourseCommandHandler : ICommandHandler<AddCourseCommand>,ICommandHa
                     ?? throw new NotFoundException("راند یافت نشد.");
         
         var userid = _userInfoService.GetUserIdByToken();
+        
         if (round.RoundStatus != RoundStatus.PendingCourse)
             throw new ValidationException("این راند در مرحله انتخاب درس نیست.");
 
