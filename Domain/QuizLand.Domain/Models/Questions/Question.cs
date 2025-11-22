@@ -1,4 +1,5 @@
 ﻿using QuizLand.Domain.Models.Courses;
+using QuizLand.Domain.Models.QuestionReports;
 
 namespace QuizLand.Domain.Models.Questions;
 
@@ -18,4 +19,5 @@ public class Question : BaseEntity<long>
     public string Source { get; set; }
     public long CourseId { get; set; }
     public Course Course { get; set; }
+    public IEnumerable<QuestionReport> QuestionReports { get; set; }
 }

@@ -3,6 +3,7 @@ using QuizLand.Domain.Models.Avatars;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
 using QuizLand.Domain.Models.Provinces;
+using QuizLand.Domain.Models.QuestionReports;
 using QuizLand.Domain.Models.TicketMessages;
 using QuizLand.Domain.Models.Tickets;
 
@@ -40,4 +41,5 @@ public class User:BaseEntity<Guid>
 
     public long ProvinceId { get; set; }
     public Province Province { get; set; }
+    public IEnumerable<QuestionReport> QuestionReports { get; set; }
 }
