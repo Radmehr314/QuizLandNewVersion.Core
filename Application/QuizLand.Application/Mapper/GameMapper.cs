@@ -1,6 +1,7 @@
 ﻿using QuizLand.Application.Contract.Commands.Game;
 using QuizLand.Application.Contract.Queries.Game;
 using QuizLand.Application.Contract.QueryResults.Game;
+using QuizLand.Application.Contract.QueryResults.RoundQuestionAnswer;
 using QuizLand.Domain.Models.Games;
 
 namespace QuizLand.Application.Mapper;
@@ -81,7 +82,37 @@ public static class GameMapper
             WinnerClientId = game.WinnerUserId,
             RoundNumber = game.RoundNumber,
             IsYourTurn = (game.UserTurnId != null && game.UserTurnId == userId ? true : false),
-            Gamers = game.GetGamersByGameIdMapper()
+            Gamers = game.GetGamersByGameIdMapper(),
+            RoundQuestionAnswers = game.Rounds
+                .SelectMany(r => new[] { r.FirstRoundQuestion, r.SecondRoundQuestion, r.ThirdRoundQuestion }
+                    .Where(rq => rq != null)
+                    .Select(rq => new { Round = r, RoundQuestion = rq }))
+
+                .SelectMany(x => x.RoundQuestion.RoundQuestionAnswers,
+                    (x, answer) => new
+                    {
+                        x.Round,
+                        x.RoundQuestion,
+                        Answer = answer,
+                        Gamer = answer.Gamer
+                    })
+
+                .GroupBy(x => new { x.Gamer.UserId, x.Round.RoundNumber })
+                .Select(g => new GetAllRoundQuestionAnswerQueryResult
+                {
+                    UserId = g.Key.UserId,
+                    RoundNumber = g.Key.RoundNumber,
+
+                    IsFirstQuestionCorrect = g.Any(x =>
+                        x.RoundQuestion.QuestionNumber == 1 && x.Answer.IsCorrect),
+
+                    IsSecondQuestionCorrect = g.Any(x =>
+                        x.RoundQuestion.QuestionNumber == 2 && x.Answer.IsCorrect),
+
+                    IsThirdQuestionCorrect = g.Any(x =>
+                        x.RoundQuestion.QuestionNumber == 3 && x.Answer.IsCorrect),
+                })
+                .ToList()
         };
     }
 }

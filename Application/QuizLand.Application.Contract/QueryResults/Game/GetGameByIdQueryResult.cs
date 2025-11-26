@@ -1,4 +1,5 @@
 ﻿using QuizLand.Application.Contract.QueryResults.Gamer;
+using QuizLand.Application.Contract.QueryResults.RoundQuestionAnswer;
 
 namespace QuizLand.Application.Contract.QueryResults.Game;
 
@@ -16,4 +17,5 @@ public class GetGameByIdQueryResult
 
     public int CountOfJoinedClients { get; set; }
     public IEnumerable<GetGamersByGameIdQueryResult> Gamers { get; set; }
+    public IEnumerable<GetAllRoundQuestionAnswerQueryResult>? RoundQuestionAnswers { get; set; }
 }
