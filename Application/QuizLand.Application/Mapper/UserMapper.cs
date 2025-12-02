@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using QuizLand.Application.Contract.Commands.User;
+using QuizLand.Application.Contract.DTOs;
 using QuizLand.Application.Contract.Queries.User;
 using QuizLand.Application.Contract.QueryResults.User;
 using QuizLand.Domain.Models.CodeLogs;
@@ -37,7 +38,7 @@ public static class UserMapper
         };
     }
 
-    public static GetLoginUserInfoQueryResult LoginUserInfoMapper(this User user)
+    public static GetLoginUserInfoQueryResult LoginUserInfoMapper(this User user,LevelInfoDto levelInfo)
     {
         return new GetLoginUserInfoQueryResult()
         {
@@ -46,7 +47,7 @@ public static class UserMapper
             AvatarPath = user.Avatar.FilePath.Replace('\\', '/'),
             PhoneNumber = user.PhoneNumber,
             Coin = user.Coin,
-            XP = user.XP
+           LevelInfo = levelInfo
         };
     }
 

@@ -31,6 +31,8 @@ public class UserRepository : IUserRepository
     public async Task<long> Count() => await _dataBaseContext.Users.LongCountAsync();
     public async Task<bool> UserExists(string username) => await _dataBaseContext.Users.AnyAsync(f => f.Username == username);
 
+    public async Task<bool> UserExistsByPhoneNumber(string phoneNumber) =>
+        await _dataBaseContext.Users.AnyAsync(f => f.PhoneNumber == phoneNumber);
 
     public async Task<long> CountByOnlineUsers()=> await _dataBaseContext.Users.LongCountAsync(f => f.IsOnline);
     public async Task DeleteUser(Guid id) => _dataBaseContext.Remove(await GetById(id));

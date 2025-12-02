@@ -9,4 +9,5 @@ public class GetGamersByGameIdQueryResult
     public string Username { get; set; }
     public string AvatarPath { get; set; }
     public bool IsOwner { get; set; }
+    public int Level { get; set; }
 }

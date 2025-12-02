@@ -18,7 +18,8 @@ public class QuestionReportCommandHandler : ICommandHandler<AddQuestionReportCom
     }
     public async Task<CommandResult> Handle(AddQuestionReportCommand command)
     {
-        var data = command.Factory(_userInfoService.GetUserIdByToken());
+        var question = await _unitOfWork.RoundQuestionRepository.GetById(command.QuestionId);
+        var data = command.Factory(_userInfoService.GetUserIdByToken(),question.QuestionId);
         await _unitOfWork.QuestionReportRepository.Add(data);
         await _unitOfWork.Save();
         return new CommandResult()

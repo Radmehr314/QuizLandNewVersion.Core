@@ -58,7 +58,6 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
             .Where(rq => rq != null)
             .ToDictionary(rq => rq!.Id, rq => rq!);
         
-        
         if (!command.Answers.All(a => rqMap.ContainsKey(a.RoundQuestionId)))
             throw new ValidationException("پاسخ‌ها با سؤالات این راند هم‌خوان نیست.");
         
@@ -96,28 +95,20 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                 if (game.Type != 2)
                 {
                     round.RoundStatus = RoundStatus.AwaitingP2;
-                    game.UserTurnId = opponentUserId.UserId;
-                    await _realTimeNotifier.SendToUserAsync(opponentUserId.UserId.ToString(),"WaitingForMyAnswer",new {GameId = command.GameId,RoundNumber = command.RoundNumber, at = DateTime.UtcNow});
+                    if (game.RoundNumber == 1 && opponentUserId == null)
+                    {
+                        game.UserTurnId = null;
+                    }
+                    else
+                    {
+                        game.UserTurnId = opponentUserId.UserId;
+                        await _realTimeNotifier.SendToUserAsync(opponentUserId.UserId.ToString(), "WaitingForMyAnswer",
+                            new { GameId = command.GameId, RoundNumber = command.RoundNumber, at = DateTime.UtcNow });
+
+                    }
 
                 }
-                round.RoundStatus = RoundStatus.Completed;
-                round.CompletedAt = DateTime.Now;
-                roundCompleted = true;
                 await _unitOfWork.Save();
-                
-                var next = new Round
-                {
-                    GameId = round.GameId,
-                    RoundNumber = round.RoundNumber + 1,
-                    SelectingGamerId = caller.Id,
-                    RoundStatus = RoundStatus.PendingCourse,
-                    CreateAt = DateTime.Now
-                };
-                await _unitOfWork.RoundRepository.Add(next);
-                nextRoundNo = next.RoundNumber;
-                game.RoundNumber++;
-                game.UserTurnId = caller.Id;
-                
             }
             else
             {
@@ -128,6 +119,7 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                 
                 if (round.RoundNumber < 4)
                 {
+
                     // ساخت راند بعد و تغییر SelectingGamer
                     var next = new Round
                     {
@@ -135,15 +127,14 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                         RoundNumber = round.RoundNumber + 1,
                         SelectingGamerId = caller.Id,
                         RoundStatus = RoundStatus.PendingCourse,
-                        CreateAt = DateTime.Now
+                        CreateAt = DateTime.Now,
+                        FirstAnswerGamerId = caller.Id
                     };
                     await _unitOfWork.RoundRepository.Add(next);
                     nextRoundNo = next.RoundNumber;
                     game.RoundNumber++;
                     game.UserTurnId = userId;
                     await _realTimeNotifier.SendToUserAsync(userId.ToString(),"PickCourse",new {GameId = command.GameId,RoundNumber = command.RoundNumber, at = DateTime.UtcNow});
-
-
                 }
                 else
                 {

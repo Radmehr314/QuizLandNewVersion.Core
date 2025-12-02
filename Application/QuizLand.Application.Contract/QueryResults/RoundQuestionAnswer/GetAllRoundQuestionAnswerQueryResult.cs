@@ -7,4 +7,5 @@ public class GetAllRoundQuestionAnswerQueryResult
     public bool IsFirstQuestionCorrect { get; set; }
     public bool IsSecondQuestionCorrect { get; set; }
     public bool IsThirdQuestionCorrect { get; set; }
+
 }

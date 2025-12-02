@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using QuizLand.Application.Contract.Contracts;
+using QuizLand.Application.Contract.DTOs;
 using QuizLand.Application.Contract.Exceptions;
 using QuizLand.Application.Contract.Framework;
 using QuizLand.Application.Contract.Framework.Utils;
@@ -17,7 +18,7 @@ using QuizLand.Application.Mapper;
 namespace QuizLand.Application.QueryHandler;
 
 public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHandler<GetCodeQuery,GetCodeQueryResult>,IQueryHandler<CountOfOnlineUserQuery,CountOfOnlineUserQueryResult>,IQueryHandler<CountAllUserQuery,CountAllUserQueryResult>,IQueryHandler<GetCodeForForgetPasswordQuery,GetCodeForForgetPasswordQueryResult>
-,IQueryHandler<GetLoginUserInfoQuery,GetLoginUserInfoQueryResult>,IQueryHandler<GetCodeForUserValidationQuery,GetCodeForUserValidationQueryResult>
+,IQueryHandler<GetLoginUserInfoQuery,GetLoginUserInfoQueryResult>,IQueryHandler<GetCodeForUserValidationQuery,GetCodeForUserValidationQueryResult>,IQueryHandler<ExistUsernameQuery,ExistUsernameQueryResult>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITokenService _tokenService;
@@ -130,6 +131,46 @@ public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHa
             IsSmsProviderEnabled = false,
         };
     }
+    public LevelInfoDto CalculateLevelInfo(long totalXp)
+    {
+        var level = 1;
+        var xpLeft = totalXp;
+
+        var BaseXp = Convert.ToInt32(_config["Leveling:BaseXp"]
+                     ?? throw new InvalidOperationException("Missing Leveling:BaseXp"));
+        var GrowXp =Convert.ToInt32(_config["Leveling:GrowXp"]
+                     ?? throw new InvalidOperationException("Missing Leveling:GrowXp"));
+        while (true)
+        {
+            // XP لازم برای رفتن از این لول به لول بعد
+            var costForThisLevel = BaseXp + GrowXp * (level - 1);
+
+            if (xpLeft < costForThisLevel)
+            {
+                // اینجا دیگه نمی‌تونه بره لول بعد، پس این لول فعلیه
+                var xpInCurrentLevel = xpLeft;
+                var xpNeedForNextLevel = costForThisLevel;
+                var remainingForNextLevel = xpNeedForNextLevel - xpInCurrentLevel;
+
+                var progress = xpNeedForNextLevel == 0
+                    ? 0
+                    : (double)xpInCurrentLevel / xpNeedForNextLevel;
+
+                return new LevelInfoDto
+                {
+                    TotalXp = totalXp,
+                    Level = level,
+                    XpInCurrentLevel = xpInCurrentLevel,
+                    XpNeedForNextLevel = xpNeedForNextLevel,
+                    RemainingForNextLevel = remainingForNextLevel,
+                };
+            }
+
+            // هنوز XP کافی دارد، می‌ره لول بعد
+            xpLeft -= costForThisLevel;
+            level++;
+        }
+    }
     
     public async Task<int> GenerateUniqueCode(string usernameOrPhoneNumber)
     {
@@ -189,13 +230,17 @@ public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHa
     public async Task<GetLoginUserInfoQueryResult> Handle(GetLoginUserInfoQuery query)
     {
         var user = await _unitOfWork.UserRepository.GetById(_userInfoService.GetUserIdByToken());
-        return user.LoginUserInfoMapper();
+        var levelInfo = CalculateLevelInfo(user.XP);
+        return user.LoginUserInfoMapper(levelInfo);
     }
 
     public async Task<GetCodeForUserValidationQueryResult> Handle(GetCodeForUserValidationQuery query)
     {
         /*var user = await _unitOfWork.UserRepository.GetByPhoneNumber(query.PhoneNumber);
         if (user is null) throw new NotFoundException("همچین کاربری وجود ندارد!!!");*/
+        var phoneExist = await _unitOfWork.UserRepository.UserExistsByPhoneNumber(query.PhoneNumber);
+        if (phoneExist) throw new UserAccessException("با این شماره قبلا اکانت ایجاد شده است.");
+        
         var code = await GenerateUniqueCode(query.PhoneNumber);
         await _unitOfWork.CodeLogsRepository.Add(query.UserValidationMapper(code.ToString()));
         await _unitOfWork.Save();
@@ -205,5 +250,13 @@ public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHa
         {
             IsSmsProviderEnabled = send,
         };
+    }
+
+    public async Task<ExistUsernameQueryResult> Handle(ExistUsernameQuery query)
+    {
+        var data = await _unitOfWork.UserRepository.UserExists(query.Username);
+        if (data) return new ExistUsernameQueryResult() { ExistUsername = true };
+        
+        return new ExistUsernameQueryResult() { ExistUsername = false };
     }
 }

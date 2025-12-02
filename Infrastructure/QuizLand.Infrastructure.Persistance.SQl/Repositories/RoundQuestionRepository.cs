@@ -26,6 +26,7 @@ public class RoundQuestionRepository : IRoundQuestionRepository
                 FirstOption = rq.Question.FirstOption,
                 SecondOption = rq.Question.SecondOption,
                 ThirdOption = rq.Question.ThirdOption,
+                FourthOption = rq.Question.FourthOption,
                 Source = rq.Question.Source,
                 DescriptiveAnswer = rq.Question.DescriptiveAnswer,
                 CorrectOption = rq.Question.CorrectOption,
@@ -35,4 +36,7 @@ public class RoundQuestionRepository : IRoundQuestionRepository
                 CountClickFourthOption = rq.Question.CountClickFourthOption,
             }
         }).ToListAsync();
+
+    public async Task<RoundQuestion> GetById(long id) =>
+        await _dataBaseContext.RoundQuestions.FirstOrDefaultAsync(f => f.Id == id);
 }

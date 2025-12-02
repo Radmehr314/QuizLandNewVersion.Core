@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="DTOs\User\" />
       <Folder Include="Framework\Security\" />
       <Folder Include="Queries\Notification\" />
       <Folder Include="QueryResults\Notification\" />

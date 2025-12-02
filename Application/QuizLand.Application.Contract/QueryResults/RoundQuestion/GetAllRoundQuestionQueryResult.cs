@@ -8,6 +8,7 @@ public class GetAllRoundQuestionQueryResult
     public string FirstOption { get; set; }
     public string SecondOption { get; set; }
     public string ThirdOption { get; set; }
+    public string FourthOption { get; set; }
     public int CorrectOption { get; set; } // 1 2 3 4
     public string Source { get; set; }
     public string DescriptiveAnswer { get; set; }

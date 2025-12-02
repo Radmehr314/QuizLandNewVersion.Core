@@ -7,6 +7,7 @@ using QuizLand.Application.Contract.Framework;
 using QuizLand.Application.Mapper;
 using QuizLand.Domain;
 using QuizLand.Domain.Models.Games;
+using QuizLand.Domain.Models.Rands;
 
 namespace QuizLand.Application.CommandHandler;
 
@@ -58,7 +59,10 @@ public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>,ICo
         }
         game.CountOfJoinedClients = 2;
         game.MatchClients = true;
-
+        if (game.RoundNumber == 1 && game.Rounds.FirstOrDefault().RoundStatus == RoundStatus.AwaitingP2)
+        {
+            game.UserTurnId = UserId;
+        }
 
         var opponent = await _unitOfWork.UserRepository.GetById(UserId);
         opponent.Coin -= 5;

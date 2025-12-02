@@ -49,6 +49,7 @@ public class RoundQueryController : IQueryHandler<GetRoundQuestionsQuery,GetRoun
             FirstOption = x.Question.FirstOption,
             SecondOption = x.Question.SecondOption,
             ThirdOption = x.Question.ThirdOption,
+            FourthOption = x.Question.FourthOption,
             CorrectOption = x.Question.CorrectOption,
             Source = x.Question.Source,
             DescriptiveAnswer = x.Question.DescriptiveAnswer,

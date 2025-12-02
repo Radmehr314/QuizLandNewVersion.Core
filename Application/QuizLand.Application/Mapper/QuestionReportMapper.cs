@@ -8,11 +8,11 @@ namespace QuizLand.Application.Mapper;
 
 public static class QuestionReportMapper
 {
-    public static QuestionReport Factory(this AddQuestionReportCommand addQuestionReportCommand,Guid UserId)
+    public static QuestionReport Factory(this AddQuestionReportCommand addQuestionReportCommand,Guid UserId,long questionId)
     {
         return new QuestionReport()
         {
-            QuestionId = addQuestionReportCommand.QuestionId,
+            QuestionId = questionId,
             ReportType = addQuestionReportCommand.ReportType,
             Description = addQuestionReportCommand.Description,
             UserId = UserId

@@ -1,8 +1,11 @@
 ﻿using QuizLand.Application.Contract.Commands.Game;
 using QuizLand.Application.Contract.Queries.Game;
 using QuizLand.Application.Contract.QueryResults.Game;
+using QuizLand.Application.Contract.QueryResults.Round;
 using QuizLand.Application.Contract.QueryResults.RoundQuestionAnswer;
 using QuizLand.Domain.Models.Games;
+using QuizLand.Domain.Models.RandQuestionAnswers;
+using QuizLand.Domain.Models.Rands;
 
 namespace QuizLand.Application.Mapper;
 
@@ -69,50 +72,67 @@ public static class GameMapper
         return $"{(int)ts.TotalDays} روز پیش";
     }
 
-    public static GetGameByIdQueryResult GetGameByIdMapper(this Game game,Guid userId)
+    public static GetGameByIdQueryResult GetGameByIdMapper(this Game game, Guid userId,int BaseXp,int GrowXp)
+{
+    var rounds = game.Rounds ?? Enumerable.Empty<Round>();
+
+    return new GetGameByIdQueryResult()
     {
-        return new GetGameByIdQueryResult()
-        {
-            Id = game.Id,
-            Type = game.Type,
-            CountOfJoinedClients = game.CountOfJoinedClients,
-            StartedAt = game.StartedAt,
-            MatchClients = game.MatchClients,
-            EndedAt = game.EndedAt,
-            WinnerClientId = game.WinnerUserId,
-            RoundNumber = game.RoundNumber,
-            IsYourTurn = (game.UserTurnId != null && game.UserTurnId == userId ? true : false),
-            Gamers = game.GetGamersByGameIdMapper(),
-            RoundQuestionAnswers = game.Rounds
-                .SelectMany(r => new[] { r.FirstRoundQuestion, r.SecondRoundQuestion, r.ThirdRoundQuestion }
+        Id = game.Id,
+        Type = game.Type,
+        CountOfJoinedClients = game.CountOfJoinedClients,
+        StartedAt = game.StartedAt,
+        MatchClients = game.MatchClients,
+        EndedAt = game.EndedAt,
+        WinnerClientId = game.WinnerUserId,
+        RoundNumber = game.RoundNumber,
+        IsYourTurn = (game.UserTurnId != null && game.UserTurnId == userId),
+        Gamers = game.GetGamersByGameIdMapper(BaseXp,GrowXp),
+
+        RoundQuestionAnswers = rounds
+            // هر راند → سه سؤالش (فقط اون‌هایی که نال نیستن)
+            .SelectMany(r =>
+                new[] { r.FirstRoundQuestion, r.SecondRoundQuestion, r.ThirdRoundQuestion }
                     .Where(rq => rq != null)
-                    .Select(rq => new { Round = r, RoundQuestion = rq }))
-
-                .SelectMany(x => x.RoundQuestion.RoundQuestionAnswers,
-                    (x, answer) => new
-                    {
-                        x.Round,
-                        x.RoundQuestion,
-                        Answer = answer,
-                        Gamer = answer.Gamer
-                    })
-
-                .GroupBy(x => new { x.Gamer.UserId, x.Round.RoundNumber })
-                .Select(g => new GetAllRoundQuestionAnswerQueryResult
+                    .Select(rq => new { Round = r, RoundQuestion = rq })
+            )
+            // از هر سؤال → جواب‌ها (اگر کالکشن نال بود، خالی در نظر بگیر)
+            .SelectMany(
+                x => x.RoundQuestion.RoundQuestionAnswers ?? Enumerable.Empty<RoundQuestionAnswer>(),
+                (x, answer) => new
                 {
-                    UserId = g.Key.UserId,
-                    RoundNumber = g.Key.RoundNumber,
+                    x.Round,
+                    x.RoundQuestion,
+                    Answer = answer,
+                    Gamer = answer.Gamer
+                }
+            )
+            // جواب‌هایی که Gamer ندارن رو بنداز دور، چون UserId نداریم
+            .Where(x => x.Gamer != null)
+            // گروه‌بندی بر اساس User + شماره راند
+            .GroupBy(x => new { x.Gamer.UserId, x.Round.RoundNumber })
+            .Select(g => new GetAllRoundQuestionAnswerQueryResult
+            {
+                UserId = g.Key.UserId,
+                RoundNumber = g.Key.RoundNumber,
 
-                    IsFirstQuestionCorrect = g.Any(x =>
-                        x.RoundQuestion.QuestionNumber == 1 && x.Answer.IsCorrect),
+                IsFirstQuestionCorrect = g.Any(x =>
+                    x.RoundQuestion.QuestionNumber == 1 && x.Answer.IsCorrect),
 
-                    IsSecondQuestionCorrect = g.Any(x =>
-                        x.RoundQuestion.QuestionNumber == 2 && x.Answer.IsCorrect),
+                IsSecondQuestionCorrect = g.Any(x =>
+                    x.RoundQuestion.QuestionNumber == 2 && x.Answer.IsCorrect),
 
-                    IsThirdQuestionCorrect = g.Any(x =>
-                        x.RoundQuestion.QuestionNumber == 3 && x.Answer.IsCorrect),
-                })
-                .ToList()
-        };
-    }
+                IsThirdQuestionCorrect = g.Any(x =>
+                    x.RoundQuestion.QuestionNumber == 3 && x.Answer.IsCorrect),
+            })
+            .ToList(),
+        RoundInfos = game.Rounds.Select(r=>new GetRoundInfoQueryResult()
+        {
+            Id = r.Id,
+            CourseId = r?.CourseId,
+            CourseName = r?.Course?.Title
+        })
+    };
+}
+
 }

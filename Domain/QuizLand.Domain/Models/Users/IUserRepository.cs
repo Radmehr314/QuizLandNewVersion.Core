@@ -12,6 +12,7 @@ public interface IUserRepository
     Task<List<User>> AllPagination(int pageNumber, int size);
     Task<long> Count();
     Task<bool> UserExists(string username);
+    Task<bool> UserExistsByPhoneNumber(string phoneNumber);
     Task<long> CountByOnlineUsers();
     Task DeleteUser(Guid id);
     

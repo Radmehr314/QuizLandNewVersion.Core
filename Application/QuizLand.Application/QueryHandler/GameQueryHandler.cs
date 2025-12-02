@@ -1,4 +1,6 @@
-﻿using QuizLand.Application.Contract.Contracts;
+﻿using Microsoft.Extensions.Configuration;
+using QuizLand.Application.Contract.Contracts;
+using QuizLand.Application.Contract.DTOs;
 using QuizLand.Application.Contract.Exceptions;
 using QuizLand.Application.Contract.Framework;
 using QuizLand.Application.Contract.Queries.Game;
@@ -12,11 +14,14 @@ public class GameQueryHandler : IQueryHandler<GetAllMyRunningGamesQuery,List<Get
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserInfoService _userInfoService;
+    private readonly IConfiguration _config;
 
-    public GameQueryHandler(IUnitOfWork unitOfWork, IUserInfoService userInfoService)
+
+    public GameQueryHandler(IUnitOfWork unitOfWork, IUserInfoService userInfoService, IConfiguration config)
     {
         _unitOfWork = unitOfWork;
         _userInfoService = userInfoService;
+        _config = config;
     }
     public async Task<List<GetAllMyRunningGamesQueryResult>> Handle(GetAllMyRunningGamesQuery query)
     {
@@ -29,7 +34,13 @@ public class GameQueryHandler : IQueryHandler<GetAllMyRunningGamesQuery,List<Get
     {
         var game = await _unitOfWork.GameRepository.GetGameById(query.GameId);
         if (game == null) throw new NotFoundException("بازی یافت نشد!!!");
-        var data =  game.GetGameByIdMapper(_userInfoService.GetUserIdByToken());
+        var BaseXp = Convert.ToInt32(_config["Leveling:BaseXp"]
+                                     ?? throw new InvalidOperationException("Missing Leveling:BaseXp"));
+        var GrowXp =Convert.ToInt32(_config["Leveling:GrowXp"]
+                                    ?? throw new InvalidOperationException("Missing Leveling:GrowXp"));
+        var data =  game.GetGameByIdMapper(_userInfoService.GetUserIdByToken(),BaseXp,GrowXp);
         return data;
     }
+    
+
 }
