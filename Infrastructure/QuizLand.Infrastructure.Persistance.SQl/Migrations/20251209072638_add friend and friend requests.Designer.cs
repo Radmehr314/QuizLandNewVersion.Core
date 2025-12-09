@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QuizLand.Infrastructure.Persistance.SQl;
 
@@ -11,9 +12,11 @@ using QuizLand.Infrastructure.Persistance.SQl;
 namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20251209072638_add friend and friend requests")]
+    partial class addfriendandfriendrequests
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -275,41 +278,6 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.HasIndex("WinnerUserId");
 
                     b.ToTable("Games", (string)null);
-                });
-
-            modelBuilder.Entity("QuizLand.Domain.Models.Notifications.Notification", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsSeen")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NotificationTypes")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("QuizLand.Domain.Models.Provinces.Province", b =>
@@ -794,17 +762,6 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Navigation("Winner");
                 });
 
-            modelBuilder.Entity("QuizLand.Domain.Models.Notifications.Notification", b =>
-                {
-                    b.HasOne("QuizLand.Domain.Models.Users.User", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("QuizLand.Domain.Models.QuestionReports.QuestionReport", b =>
                 {
                     b.HasOne("QuizLand.Domain.Models.Questions.Question", "Question")
@@ -1054,8 +1011,6 @@ namespace QuizLand.Infrastructure.Persistance.SQl.Migrations
                     b.Navigation("Games");
 
                     b.Navigation("MyTurnGames");
-
-                    b.Navigation("Notifications");
 
                     b.Navigation("QuestionReports");
 

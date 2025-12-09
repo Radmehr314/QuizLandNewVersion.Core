@@ -58,7 +58,7 @@ public static class GameMapper
                 SpentHours = (int)elapsed.TotalHours,                 // کل ساعت‌ها
                 SpentMinutes = (int)(elapsed.TotalMinutes % 60),       // دقیقه‌ی باقیمانده 0..59
                 OpponentAvatar = (f.CountOfJoinedClients == 2 && f.Type == 1 ? f.Gamers.Where(f=>f.UserId != userId).FirstOrDefault().User.Avatar.FilePath.Replace('\\', '/')  :f.Gamers.Where(f=>f.UserId == userId).FirstOrDefault().User.Avatar.FilePath.Replace('\\', '/')  ),
-                OpponentUsername = (f.CountOfJoinedClients == 2 ? f.Gamers.Where(f=>f.UserId != userId).FirstOrDefault().User.Username : "در انتظار حریف")
+                OpponentUsername = (f.Type == 2 ? "بازی تک نفره":  (f.CountOfJoinedClients == 2 ? f.Gamers.Where(f=>f.UserId != userId).FirstOrDefault().User.Username : "در انتظار حریف"))
             };
         }).ToList();
     }

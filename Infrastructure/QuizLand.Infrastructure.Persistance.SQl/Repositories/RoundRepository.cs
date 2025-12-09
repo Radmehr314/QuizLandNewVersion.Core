@@ -11,6 +11,17 @@ public class RoundRepository : IRoundRepository
     {
         _dataBaseContext = dataBaseContext;
     }
+
     public async Task Add(Round round) => await _dataBaseContext.AddAsync(round);
-    public async Task<Round?> GetByGameAndNumber(Guid gameId, int roundNumber) => await _dataBaseContext.Rounds.Include(f=>f.FirstRoundQuestion).ThenInclude(f=>f.Question).Include(f=>f.SecondRoundQuestion).ThenInclude(f=>f.Question).Include(f=>f.ThirdRoundQuestion).ThenInclude(f=>f.Question).FirstOrDefaultAsync(f=>f.GameId == gameId&& f.RoundNumber == roundNumber);
+
+    public async Task<Round?> GetByGameAndNumber(Guid gameId, int roundNumber) => await _dataBaseContext.Rounds
+        .Include(f => f.FirstRoundQuestion).ThenInclude(f => f.Question).Include(f => f.SecondRoundQuestion)
+        .ThenInclude(f => f.Question).Include(f => f.ThirdRoundQuestion).ThenInclude(f => f.Question)
+        .FirstOrDefaultAsync(f => f.GameId == gameId && f.RoundNumber == roundNumber);
+
+    public async Task DeleteAll()
+    {
+        var rounds = await _dataBaseContext.Rounds.ToListAsync();
+         _dataBaseContext.RemoveRange(rounds);
+    }
 }

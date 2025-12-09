@@ -52,5 +52,9 @@ public class GamerRepository : IGamerRepository
         return (owner, guest);
     }
 
-
+    public async Task DeleteAll()
+    {
+        var gamers = await _dataBaseContext.Gamers.ToListAsync();
+        _dataBaseContext.RemoveRange(gamers);
+    }
 }

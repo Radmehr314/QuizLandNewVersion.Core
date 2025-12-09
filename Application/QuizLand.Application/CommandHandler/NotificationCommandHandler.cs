@@ -7,7 +7,7 @@ using QuizLand.Domain;
 
 namespace QuizLand.Application.CommandHandler;
 
-public class NotificationCommandHandler : ICommandHandler<SendNotificationCommand>
+public class NotificationCommandHandler : ICommandHandler<SeenNotificationsCommand>
 {
     private readonly IUnitOfWork  _unitOfWork;
     private readonly IRealTimeNotifier _realTimeNotifier;
@@ -17,12 +17,17 @@ public class NotificationCommandHandler : ICommandHandler<SendNotificationComman
         _unitOfWork = unitOfWork;
         _realTimeNotifier = realTimeNotifier;
     }
-    public async Task<CommandResult> Handle(SendNotificationCommand command)
-    {
-        var user  = await _unitOfWork.UserRepository.GetById(command.UserId);
-        await _realTimeNotifier.SendToUserAsync(user.Id.ToString(),"UserNotification",new {text = command.Content, at = DateTime.UtcNow});
-        return new CommandResult() { Id = user.Id };
-    }
 
-    
+
+    public async Task<CommandResult> Handle(SeenNotificationsCommand command)
+    {
+        var notification = await _unitOfWork.NotificationRepository.GetAllById(command.Ids);
+        foreach (var item in notification)
+        {
+            item.IsSeen = true;
+        }
+
+        await _unitOfWork.Save();
+        return new CommandResult();
+    }
 }

@@ -15,6 +15,7 @@ public interface IGameRepository
     Task<bool> CanStartNewGame(Guid userId);
     Task CompleteGame(Guid gameId, Guid? winnerUserId);
     Task<GameCorrectAnswerResult> GetWinnerByCorrectAnswers(Guid gameId);
+    Task DeleteAll();
     public sealed record GameCorrectAnswerResult(
         Gamer OwnerGamer, int OwnerCorrect,
         Gamer GuestGamer, int GuestCorrect,

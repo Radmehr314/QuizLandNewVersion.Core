@@ -4,4 +4,5 @@ public interface IRoundRepository
 {
     Task Add(Round round);
     Task<Round?> GetByGameAndNumber(Guid gameId, int roundNumber);
+    Task DeleteAll();
 }

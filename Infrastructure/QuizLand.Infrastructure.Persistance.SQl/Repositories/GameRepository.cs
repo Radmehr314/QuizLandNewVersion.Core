@@ -73,4 +73,10 @@ public class GameRepository : IGameRepository
             winnerUserId
         );
     }
+
+    public async Task DeleteAll()
+    {
+        var games = await _dataBaseContext.Games.ToListAsync();
+        _dataBaseContext.RemoveRange(games);
+    }
 }

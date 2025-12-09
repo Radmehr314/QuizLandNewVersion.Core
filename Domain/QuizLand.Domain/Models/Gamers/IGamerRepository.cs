@@ -10,4 +10,5 @@ public interface IGamerRepository
     Task<Guid> GetOpponentId(Guid gameId, Guid currentGamerId);
     Task<Guid> GetOpponentUserIdByUserAndGameId(Guid gameId, Guid userId);
     Task<(Gamer owner, Gamer guest)> GetPlayersAsync(Guid gameId);
+    Task DeleteAll();
 }

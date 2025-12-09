@@ -1,7 +1,10 @@
 ﻿
 using QuizLand.Domain.Models.Avatars;
+using QuizLand.Domain.Models.FriendRequests;
+using QuizLand.Domain.Models.Friends;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
+using QuizLand.Domain.Models.Notifications;
 using QuizLand.Domain.Models.Provinces;
 using QuizLand.Domain.Models.QuestionReports;
 using QuizLand.Domain.Models.TicketMessages;
@@ -42,4 +45,10 @@ public class User:BaseEntity<Guid>
     public long ProvinceId { get; set; }
     public Province Province { get; set; }
     public IEnumerable<QuestionReport> QuestionReports { get; set; }
+    public IEnumerable<FriendRequest> ReuqesterFriendRequests { get; set; }
+    public IEnumerable<FriendRequest> ReciverFriendRequests { get; set; }
+
+    public IEnumerable<Friend> FirstUserFriends { get; set; }
+    public IEnumerable<Friend> SecondUserFriends { get; set; }
+    public IEnumerable<Notification> Notifications { get; set; }
 }

@@ -2,8 +2,11 @@
 using QuizLand.Domain.Models.CodeLogs;
 using QuizLand.Domain.Models.Courses;
 using QuizLand.Domain.Models.ErrorLogs;
+using QuizLand.Domain.Models.FriendRequests;
+using QuizLand.Domain.Models.Friends;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
+using QuizLand.Domain.Models.Notifications;
 using QuizLand.Domain.Models.Provinces;
 using QuizLand.Domain.Models.QuestionReports;
 using QuizLand.Domain.Models.Questions;
@@ -35,6 +38,9 @@ public interface IUnitOfWork
     IErrorLogRepository ErrorLogRepository { get; set; }
     IProvinceRepository ProvinceRepository { get; set; }
     IQuestionReportRepository QuestionReportRepository { get; set; }
+    IFriendRequestRepository FriendRequestRepository { get; set; }
+    IFriendRepository FriendRepository { get; set; }
+    INotificationRepository NotificationRepository { get; set; }
     Task<int> Save();
 
 }
