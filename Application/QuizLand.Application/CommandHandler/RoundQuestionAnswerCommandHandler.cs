@@ -74,6 +74,25 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                 var rq = rqMap[a.RoundQuestionId];      // RoundQuestion همین راند
                 var isCorrect = Evaluate(rq, a);        // تصحیح (rq.Question باید قبلاً include شده باشه اگر لازم داری)
                 if (isCorrect) correct++;
+                var question = await _unitOfWork.QuestionRepository.GetById(rq.QuestionId);
+                if (a.SelectedOption == 1)
+                {
+                    question.CountClickFirstOption++;
+                } 
+                else if (a.SelectedOption == 2)
+                {
+                    question.CountClickSecondOption++;
+                }
+                else if(a.SelectedOption == 3)
+                {
+                    question.CountClickThirdOption++;
+                }
+                else
+                {
+                    question.CountClickFourthOption++;
+                }
+
+                
 
                 answerEntities.Add(new RoundQuestionAnswer
                 {
@@ -197,7 +216,7 @@ public class RoundQuestionAnswerCommandHandler : ICommandHandler<SubmitRoundQues
                     }
                     else
                     {
-                        Guid? winnerUserId = caller.Id;
+                        Guid? winnerUserId = userId;
                         game.WinnerUserId = winnerUserId;
                         game.EndedAt = DateTime.Now;
                         game.UserTurnId = null;

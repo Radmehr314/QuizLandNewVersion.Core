@@ -29,6 +29,9 @@ public class FriendRequestCommandHandler : ICommandHandler<SendNewFriendRequestC
         {
             throw new NotFoundException("کاربر یافت نشد");
         }
+
+        var exist = await _unitOfWork.FriendRequestRepository.Exist(sender.Id, user.Id);
+        if (exist) throw new UserAccessException("درخواست دوستی قبلی هنوز تایید یا رد نشده است.");
         var data = command.Factory(_userInfoService.GetUserIdByToken(),user.Id);
         await _unitOfWork.FriendRequestRepository.SendNewRequest(data);
         var notification = command.NewNotificationForRequestFriend(user.Id,sender.Username);

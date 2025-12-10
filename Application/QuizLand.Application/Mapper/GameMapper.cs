@@ -22,6 +22,18 @@ public static class GameMapper
             RoundNumber = 1
         };
     }
+    
+    public static Game PlayeWithFriendFactory(this StartGameWithFriendCommand command)
+    {
+        return new Game()
+        {
+            Type = 1,
+            CountOfJoinedClients = 1,
+            StartedAt = DateTime.Now,
+            MatchClients = false,
+            RoundNumber = 1
+        };
+    }
     public static Game OnePlayerFactory(this StartOnePlayerGameCommand command)
     {
         return new Game()

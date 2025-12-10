@@ -2,6 +2,7 @@
 using QuizLand.Domain.Models.Avatars;
 using QuizLand.Domain.Models.FriendRequests;
 using QuizLand.Domain.Models.Friends;
+using QuizLand.Domain.Models.GameRequests;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
 using QuizLand.Domain.Models.Notifications;
@@ -51,4 +52,6 @@ public class User:BaseEntity<Guid>
     public IEnumerable<Friend> FirstUserFriends { get; set; }
     public IEnumerable<Friend> SecondUserFriends { get; set; }
     public IEnumerable<Notification> Notifications { get; set; }
+    public IEnumerable<GameRequest> FirstUserGameRequest { get; set; }
+    public IEnumerable<GameRequest> SecondUserGameRequest { get; set; }
 }

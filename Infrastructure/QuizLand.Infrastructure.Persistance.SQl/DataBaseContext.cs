@@ -5,6 +5,7 @@ using QuizLand.Domain.Models.Courses;
 using QuizLand.Domain.Models.ErrorLogs;
 using QuizLand.Domain.Models.FriendRequests;
 using QuizLand.Domain.Models.Friends;
+using QuizLand.Domain.Models.GameRequests;
 using QuizLand.Domain.Models.Gamers;
 using QuizLand.Domain.Models.Games;
 using QuizLand.Domain.Models.Notifications;
@@ -42,6 +43,7 @@ public class DataBaseContext : DbContext
     public DbSet<FriendRequest> FriendRequests { get; set; }
     public DbSet<Friend> Friends { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<GameRequest> GameRequests { get; set; }
     public DataBaseContext(DbContextOptions options) : base(options) 
     {
 

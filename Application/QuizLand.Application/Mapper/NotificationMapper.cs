@@ -1,4 +1,5 @@
 ﻿using QuizLand.Application.Contract.Commands.FriendRequest;
+using QuizLand.Application.Contract.Commands.GameRequest;
 using QuizLand.Application.Contract.Framework;
 using QuizLand.Application.Contract.QueryResults.Notification;
 using QuizLand.Domain.Models.Notifications;
@@ -25,7 +26,7 @@ public static class NotificationMapper
         return new Notification()
         {
             Title = $"پذیرفت درخواست {username}",
-            Message = $"کاربر {username} درخواست دوستی شما را پذیرفت کرد.",
+            Message = $"کاربر {username} درخواست دوستی شما را پذیرفت.",
             UserId = userId,
             CreatedAt = DateTime.Now,
             IsSeen = false,
@@ -57,4 +58,46 @@ public static class NotificationMapper
             CreatedAt = f.CreatedAt.ToShamsiDate()
         }).ToList();
     }
+    
+    public static Notification NewNotificationForGameRequest(this SendNewGameRequestCommand command,Guid userId,string username)
+    {
+        return new Notification()
+        {
+            Title = $"درخواست بازی جدید از {username}",
+            Message = $"کاربر {username} برای شما یک درخواست بازی ارسال کرده است.",
+            UserId = userId,
+            CreatedAt = DateTime.Now,
+            IsSeen = false,
+            NotificationTypes = NotificationTypes.GameRequest
+        };
+    }
+    
+    public static Notification NewNotificationForAcceptGameRequest(this AcceptGameRequestCommand command,Guid userId,string username)
+    {
+        return new Notification()
+        {
+            Title = $"پذیرفت درخواست {username}",
+            Message = $"کاربر {username} درخواست بازی شما را پذیرفت.",
+            UserId = userId,
+            CreatedAt = DateTime.Now,
+            IsSeen = false,
+            NotificationTypes = NotificationTypes.AcceptFriendRequest
+        };
+    }
+    
+    public static Notification NewNotificationForRejectGameRequest(this RejectGameRequestCommand command,Guid userId,string username)
+    {
+        return new Notification()
+        {
+            Title = $"رد درخواست {username}",
+            Message = $"کاربر {username} درخواست بازی شما را رد کرد.",
+            UserId = userId,
+            CreatedAt = DateTime.Now,
+            IsSeen = false,
+            NotificationTypes = NotificationTypes.RejectAcceptFriendRequest
+        };
+    }
+
+
+    
 }

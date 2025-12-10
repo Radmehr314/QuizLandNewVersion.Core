@@ -11,7 +11,7 @@ using QuizLand.Domain.Models.Rands;
 
 namespace QuizLand.Application.CommandHandler;
 
-public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>,ICommandHandler<StartOnePlayerGameCommand>
+public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>,ICommandHandler<StartOnePlayerGameCommand>,ICommandHandler<StartGameWithFriendCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserInfoService _userInfoService;
@@ -94,6 +94,23 @@ public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>,ICo
         await _unitOfWork.Save();
         return game.Id;
     }
+    
+    private async Task<Guid> GameGeneratorForPlayWithFriend(StartGameWithFriendCommand startTwoPlayerGameCommand, Guid userId)
+    {
+        var game = startTwoPlayerGameCommand.PlayeWithFriendFactory();
+        var gamer = userId.AddFirstGamer(game);
+        var round = game.RoundFactory(gamer);
+
+        game.UserTurnId = _userInfoService.GetUserIdByToken();
+        await _unitOfWork.GameRepository.Add(game);
+        await _unitOfWork.GamerRepository.Add(gamer);
+        await _unitOfWork.RoundRepository.Add(round);
+        var user  =  await _unitOfWork.UserRepository.GetById(userId);
+        user.Coin -= 5;
+
+        await _unitOfWork.Save();
+        return game.Id;
+    }
 
     public async Task<CommandResult> Handle(StartOnePlayerGameCommand command)
     {
@@ -114,5 +131,13 @@ public class GameCommandHandler  :ICommandHandler<StartTwoPlayerGameCommand>,ICo
         await _unitOfWork.Save();
         return new CommandResult() { Id = game.Id };
 
+    }
+
+    public async Task<CommandResult> Handle(StartGameWithFriendCommand command)
+    {
+        var userId = _userInfoService.GetUserIdByToken();
+        var MatchFound = await Match(userId);
+        var newGameId = await GameGeneratorForPlayWithFriend(command, userId);
+        return new CommandResult() { Id = newGameId };
     }
 }

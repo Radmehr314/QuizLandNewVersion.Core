@@ -18,4 +18,7 @@ public enum NotificationTypes
     FriendRequest = 0,
     AcceptFriendRequest = 1,
     RejectAcceptFriendRequest = 2,
+    GameRequest = 3,
+    AcceptGameRequest = 4,
+    RejectGameRequest = 5,
 }

@@ -26,6 +26,12 @@ public class GameCommandController : BaseCommandController
         return Ok(await Bus.Dispatch(command));
     }
     
+    [HttpPost("StartGameWithFriend")]
+    public async Task<ActionResult<CommandResult>> StartOnePlayerGames([FromBody]StartGameWithFriendCommand command)
+    {
+        return Ok(await Bus.Dispatch(command));
+    }
+    
     [HttpPost("AnswerRoundQuestions")]
     public async Task<ActionResult<CommandResult>> AnswerRoundQuestion([FromBody]SubmitRoundQuestionAnswersCommand command)
     {
