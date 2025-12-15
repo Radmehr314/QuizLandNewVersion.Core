@@ -97,6 +97,13 @@ public class UserQueryController : BaseQueryController
         return Ok(await Bus.Dispatch<GetCodeForUserValidationQuery,GetCodeForUserValidationQueryResult>(query));
     }
     
+    [HttpGet("GetUserByUsername")]
+    public async Task<ActionResult<GetUserByUsernameQueryResult>> GetAllPagination(
+        [FromQuery]GetUserByUsernameQuery  query)
+    {
+        return Ok(await Bus.Dispatch<GetUserByUsernameQuery,GetUserByUsernameQueryResult>(query));
+    }
+
     
     /*[HttpGet("GetUserByPersonelCode")]
     public async Task<ActionResult<GetUserByPersonelCodeQueryResult>> GetAllPagination(

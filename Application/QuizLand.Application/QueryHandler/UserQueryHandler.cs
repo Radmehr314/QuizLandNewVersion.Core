@@ -18,7 +18,7 @@ using QuizLand.Application.Mapper;
 namespace QuizLand.Application.QueryHandler;
 
 public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHandler<GetCodeQuery,GetCodeQueryResult>,IQueryHandler<CountOfOnlineUserQuery,CountOfOnlineUserQueryResult>,IQueryHandler<CountAllUserQuery,CountAllUserQueryResult>,IQueryHandler<GetCodeForForgetPasswordQuery,GetCodeForForgetPasswordQueryResult>
-,IQueryHandler<GetLoginUserInfoQuery,GetLoginUserInfoQueryResult>,IQueryHandler<GetCodeForUserValidationQuery,GetCodeForUserValidationQueryResult>,IQueryHandler<ExistUsernameQuery,ExistUsernameQueryResult>
+,IQueryHandler<GetLoginUserInfoQuery,GetLoginUserInfoQueryResult>,IQueryHandler<GetCodeForUserValidationQuery,GetCodeForUserValidationQueryResult>,IQueryHandler<ExistUsernameQuery,ExistUsernameQueryResult>,IQueryHandler<GetUserByUsernameQuery,GetUserByUsernameQueryResult>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITokenService _tokenService;
@@ -258,5 +258,13 @@ public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHa
         if (data) return new ExistUsernameQueryResult() { ExistUsername = true };
         
         return new ExistUsernameQueryResult() { ExistUsername = false };
+    }
+
+    public async Task<GetUserByUsernameQueryResult> Handle(GetUserByUsernameQuery query)
+    {
+        var user = await _unitOfWork.UserRepository.GetByUsername(query.Username);
+        if (user is null) throw new NotFoundException("کاربر یافت نشد");
+        var levelInfo = CalculateLevelInfo(user.XP);
+        return user.UserByUsernameMapper(levelInfo);
     }
 }

@@ -1,4 +1,5 @@
-﻿using QuizLand.Domain.Models.Avatars;
+﻿using QuizLand.Domain.Leaderboard;
+using QuizLand.Domain.Models.Avatars;
 using QuizLand.Domain.Models.CodeLogs;
 using QuizLand.Domain.Models.Courses;
 using QuizLand.Domain.Models.ErrorLogs;
@@ -43,6 +44,7 @@ public interface IUnitOfWork
     IFriendRepository FriendRepository { get; set; }
     INotificationRepository NotificationRepository { get; set; }
     IGameRequestRepository GameRequestRepository { get; set; }
+    ILeaderboardRepository LeaderboardRepository { get; set; }
     Task<int> Save();
 
 }

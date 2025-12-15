@@ -1,4 +1,5 @@
 ﻿using QuizLand.Domain;
+using QuizLand.Domain.Leaderboard;
 using QuizLand.Domain.Models.Avatars;
 using QuizLand.Domain.Models.CodeLogs;
 using QuizLand.Domain.Models.Courses;
@@ -46,8 +47,9 @@ public class UnitOfWork : IUnitOfWork
     public IFriendRepository FriendRepository { get; set; }
     public INotificationRepository NotificationRepository { get; set; }
     public IGameRequestRepository GameRequestRepository { get; set; }
+    public ILeaderboardRepository LeaderboardRepository { get; set; }
 
-    public UnitOfWork(DataBaseContext dataBaseContext, IUserRepository userRepository, ICodeLogsRepository codeLogsRepository, ISupporterRepository supporterRepository, ITicketRepository ticketRepository, ITicketMessageRepository ticketMessageRepository, ICourseRepository courseRepository, IQuestionRepository questionRepository, IGameRepository gameRepository, IGamerRepository gamerRepository, IAvatarRepository avatarRepository, IRoundQuestionRepository roundQuestionRepository, IRoundRepository roundRepository, IRoundQuestionAnswerRepository roundQuestionAnswerRepository, IErrorLogRepository errorLogRepository, IProvinceRepository provinceRepository, IQuestionReportRepository questionReportRepository, IFriendRequestRepository friendRequestRepository, IFriendRepository friendRepository, INotificationRepository notificationRepository, IGameRequestRepository gameRequestRepository)
+    public UnitOfWork(DataBaseContext dataBaseContext, IUserRepository userRepository, ICodeLogsRepository codeLogsRepository, ISupporterRepository supporterRepository, ITicketRepository ticketRepository, ITicketMessageRepository ticketMessageRepository, ICourseRepository courseRepository, IQuestionRepository questionRepository, IGameRepository gameRepository, IGamerRepository gamerRepository, IAvatarRepository avatarRepository, IRoundQuestionRepository roundQuestionRepository, IRoundRepository roundRepository, IRoundQuestionAnswerRepository roundQuestionAnswerRepository, IErrorLogRepository errorLogRepository, IProvinceRepository provinceRepository, IQuestionReportRepository questionReportRepository, IFriendRequestRepository friendRequestRepository, IFriendRepository friendRepository, INotificationRepository notificationRepository, IGameRequestRepository gameRequestRepository, ILeaderboardRepository leaderboardRepository)
     {
         _dataBaseContext = dataBaseContext;
         UserRepository = userRepository;
@@ -70,6 +72,7 @@ public class UnitOfWork : IUnitOfWork
         FriendRepository = friendRepository;
         NotificationRepository = notificationRepository;
         GameRequestRepository = gameRequestRepository;
+        LeaderboardRepository = leaderboardRepository;
     }
     
     public void Dispose()

@@ -50,6 +50,18 @@ public static class UserMapper
            LevelInfo = levelInfo
         };
     }
+    
+    
+    public static GetUserByUsernameQueryResult UserByUsernameMapper(this User user,LevelInfoDto levelInfo)
+    {
+        return new GetUserByUsernameQueryResult()
+        {
+            Id = user.Id,
+            Username = user.Username,
+            AvatarPath = user.Avatar.FilePath.Replace('\\', '/'),
+            LevelInfo = levelInfo
+        };
+    }
 
     public static GetLoginUserQueryResult GetLoginUserMapper(this User user)
     {

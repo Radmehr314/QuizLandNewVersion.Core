@@ -23,7 +23,7 @@ public class UserRepository : IUserRepository
         await _dataBaseContext.Users.FirstOrDefaultAsync(
             f => f.Username == username && f.Password == password);
 
-    public async Task<User> GetByUsername(string username) => await _dataBaseContext.Users.FirstOrDefaultAsync(f=>f.Username == username);
+    public async Task<User> GetByUsername(string username) => await _dataBaseContext.Users.Include(f=>f.Avatar).FirstOrDefaultAsync(f=>f.Username == username);
     public async Task<User> GetByPhoneNumber(string phoneNumber)=> await _dataBaseContext.Users.FirstOrDefaultAsync(f=>f.PhoneNumber == phoneNumber);
 
     public async Task<List<User>> AllPagination(int pageNumber, int size)=>await _dataBaseContext.Users.Skip(Helper.CalculateSkip(pageNumber, size)).Take(size).ToListAsync();
