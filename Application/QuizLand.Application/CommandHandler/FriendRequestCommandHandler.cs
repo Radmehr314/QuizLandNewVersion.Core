@@ -23,7 +23,10 @@ public class FriendRequestCommandHandler : ICommandHandler<SendNewFriendRequestC
     }
     public async Task<CommandResult> Handle(SendNewFriendRequestCommand command)
     {
-        var user = await _unitOfWork.UserRepository.GetByUsername(command.Username);
+        var userId = _userInfoService.GetUserIdByToken();
+        if(userId == command.Id) throw new UserAccessException("نمیتوانید به خودتان درخواست دوستی بدین.");
+        
+        var user = await _unitOfWork.UserRepository.GetById(command.Id);
         var sender = await _unitOfWork.UserRepository.GetById(_userInfoService.GetUserIdByToken());
         if (user is null)
         {
@@ -36,13 +39,14 @@ public class FriendRequestCommandHandler : ICommandHandler<SendNewFriendRequestC
         await _unitOfWork.FriendRequestRepository.SendNewRequest(data);
         var notification = command.NewNotificationForRequestFriend(user.Id,sender.Username);
         await _unitOfWork.NotificationRepository.AddNewNotification(notification);
-        await _realTimeNotifier.SendToUserAsync(user.Id.ToString(),"NewNotification",new {Notification = notification,at = DateTime.UtcNow});
+        await _realTimeNotifier.SendToUserAsync(command.Id.ToString(),"NewNotification",new {Notification = "یه پیام تازه برات اومده 🙂",at = DateTime.UtcNow});
         await _unitOfWork.Save();
         return new CommandResult(){Id = data.Id};
     }
 
     public async Task<CommandResult> Handle(AcceptFriendRequestCommand command)
     {
+        
         var request = await _unitOfWork.FriendRequestRepository.GetById(command.RequestId);
         if (request is null)
         {
@@ -55,7 +59,7 @@ public class FriendRequestCommandHandler : ICommandHandler<SendNewFriendRequestC
         var user = await _unitOfWork.UserRepository.GetById(request.ReceiverId);
         var notification = command.NewNotificationForAcceptRequestFriend(request.RequesterId,user.Username);
         await _unitOfWork.NotificationRepository.AddNewNotification(notification);
-        await _realTimeNotifier.SendToUserAsync(request.RequesterId.ToString(),"NewNotification",new {Notification = notification,at = DateTime.UtcNow});
+        await _realTimeNotifier.SendToUserAsync(request.RequesterId.ToString(),"NewNotification",new{Notification = "یه پیام تازه برات اومده 🙂",at = DateTime.UtcNow});
         await _unitOfWork.Save();
         return new CommandResult() { Id = request.Id };
     }
@@ -68,7 +72,7 @@ public class FriendRequestCommandHandler : ICommandHandler<SendNewFriendRequestC
         var user = await _unitOfWork.UserRepository.GetById(request.ReceiverId);
         var notification = command.NewNotificationForRejectRequestFriend(request.RequesterId,user.Username);
         await _unitOfWork.NotificationRepository.AddNewNotification(notification);
-        await _realTimeNotifier.SendToUserAsync(request.RequesterId.ToString(),"NewNotification",new {Notification = notification,at = DateTime.UtcNow});
+        await _realTimeNotifier.SendToUserAsync(request.RequesterId.ToString(),"NewNotification",new {Notification = "یه پیام تازه برات اومده 🙂",at = DateTime.UtcNow});
         await _unitOfWork.Save();
         return new CommandResult() { Id = request.Id };
     }

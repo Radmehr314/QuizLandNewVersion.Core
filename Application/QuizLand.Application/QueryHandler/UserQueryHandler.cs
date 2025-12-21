@@ -263,7 +263,7 @@ public class UserQueryHandler : IQueryHandler<LoginRequestDto,LoginDto>,IQueryHa
     public async Task<GetUserByUsernameQueryResult> Handle(GetUserByUsernameQuery query)
     {
         var user = await _unitOfWork.UserRepository.GetByUsername(query.Username);
-        if (user is null) throw new NotFoundException("کاربر یافت نشد");
+        if (user is null || user.Id ==  _userInfoService.GetUserIdByToken()) throw new NotFoundException("کاربر یافت نشد");
         var levelInfo = CalculateLevelInfo(user.XP);
         return user.UserByUsernameMapper(levelInfo);
     }
